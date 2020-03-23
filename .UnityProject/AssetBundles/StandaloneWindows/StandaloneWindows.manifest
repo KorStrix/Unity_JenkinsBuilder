@@ -1,0 +1,11 @@
+ManifestFileVersion: 0
+CRC: 3998782171
+AssetBundleManifest:
+  AssetBundleInfos:
+    Info_0:
+      Name: prefab
+      Dependencies: {}
+    Info_1:
+      Name: scene
+      Dependencies:
+        Dependency_0: prefab

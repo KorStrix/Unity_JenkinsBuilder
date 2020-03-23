@@ -66,7 +66,7 @@ namespace Jenkins
         }
 
         [MenuItem("Build/Android Build Test", priority = 10000)]
-        static public void Build_Android_Project()
+        static public void Build_Android_Test()
         {
             BuildConfig pConfig = new BuildConfig();
             BuildTargetGroup eBuildTargetGroup = GetBuildTargetGroup(BuildTarget.Android);
