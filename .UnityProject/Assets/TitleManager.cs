@@ -32,6 +32,15 @@ public class TitleManager : MonoBehaviour
 
 	/* public - [Do~Somthing] Function 	        */
 
+	public void ClickVibrate_1()
+	{
+		ApplicationWrapper.VibrateDevice();
+	}
+
+	public void ClickVibrate_2()
+	{
+		ApplicationWrapper.VibrateDevice(100, 3);
+	}
 
 	// ========================================================================== //
 
