@@ -34,7 +34,7 @@ public class TitleManager : MonoBehaviour
 
 	public void ClickVibrate_1()
 	{
-		ApplicationWrapper.VibrateDevice();
+		ApplicationWrapper.VibrateDevice(new long[] { 100 , 200, 300}, new int[] { 3, 5, 7}, 2);
 	}
 
 	public void ClickVibrate_2()

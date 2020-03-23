@@ -34,18 +34,25 @@ public static class ApplicationWrapper
 #endif
     }
 
-    public static void VibrateDevice(long milliseconds)
+    public static void VibrateDevice(long lMilliseconds)
     {
-        Debug.Log($"{nameof(VibrateDevice)}_{milliseconds}");
+        Debug.Log($"{nameof(VibrateDevice)}_{lMilliseconds}");
 
-        Unity_Pattern.Vibration.Vibrate(milliseconds);
+        Unity_Pattern.Vibration.Vibrate(lMilliseconds);
     }
 
-    public static void VibrateDevice(long milliseconds, int repeat)
+    public static void VibrateDevice(long lMilliseconds, int iPower)
     {
-        Debug.Log($"{nameof(VibrateDevice)}_{milliseconds}_{repeat}");
+        Debug.Log($"{nameof(VibrateDevice)}_{lMilliseconds}_{iPower}");
 
-        Unity_Pattern.Vibration.Vibrate(milliseconds, repeat);
+        Unity_Pattern.Vibration.Vibrate(lMilliseconds, iPower);
+    }
+
+    public static void VibrateDevice(long[] arrMilliseconds, int[] arrPower, int iRepeatCount)
+    {
+        Debug.Log($"{nameof(VibrateDevice)}_{arrMilliseconds.Length}_{arrPower.Length}_{iRepeatCount}");
+
+        Unity_Pattern.Vibration.Vibrate(arrMilliseconds, arrPower, iRepeatCount);
     }
 }
 
