@@ -1,0 +1,16 @@
+{
+    "name": "KorStrix.JenkinsBuilder.Editor",
+    "references": [
+        "GUID:c4b8fc492eac8184fb9a42684cf8c464"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": []
+}
