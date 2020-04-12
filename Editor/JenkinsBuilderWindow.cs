@@ -107,6 +107,7 @@ namespace Jenkins
                 System.Exception pException = Builder.DoTryParsing_JsonFile(_strConfigPath, out _pBuildConfig);
                 if(pException != null)
                 {
+                    _strConfigPath = "!! Error !!" + _strConfigPath;
                     Debug.LogError($"Json Parsing Fail Path : {_strConfigPath}\n {pException}", this);
                 }
             }
@@ -196,7 +197,7 @@ namespace Jenkins
                 string strFileName_CommandLine = GetCommandLineArg("-filename");
 
                 string strBuildOutputFolderPath_Final = string.IsNullOrEmpty(strBuildOutputFolderPath_CommandLine) ? pConfig.strAbsolute_BuildOutputFolderPath : strBuildOutputFolderPath_CommandLine;
-                string strFileName_Final = string.IsNullOrEmpty(strFileName_CommandLine) ? pConfig.strFileName : strBuildOutputFolderPath_CommandLine;
+                string strFileName_Final = string.IsNullOrEmpty(strFileName_CommandLine) ? pConfig.strFileName : strFileName_CommandLine;
 
                 DoBuild(pConfig, strBuildOutputFolderPath_Final, strFileName_Final, BuildTarget.Android);
             }
@@ -274,8 +275,13 @@ namespace Jenkins
             Debug.LogFormat(const_strPrefix_ForDebugLog + " Before Build DefineSymbol TargetGroup : {0}\n" +
                 "Origin Symbol : {1}\n " +
                 "Config : {2} \n" +
-                "Current : {3}",
-                eBuildTargetGroup, pEditorSetting_Backup.strDefineSymbol, pBuildConfig.strDefineSymbol, PlayerSettings.GetScriptingDefineSymbolsForGroup(eBuildTargetGroup));
+                "Current : {3} \n" +
+                "strBuildPath : {4}",
+                eBuildTargetGroup,
+                pEditorSetting_Backup.strDefineSymbol,
+                pBuildConfig.strDefineSymbol,
+                PlayerSettings.GetScriptingDefineSymbolsForGroup(eBuildTargetGroup),
+                strBuildPath);
 
             try
             {
