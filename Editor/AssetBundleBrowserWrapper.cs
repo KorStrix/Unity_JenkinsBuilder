@@ -7,6 +7,7 @@
    ============================================ */
 #endregion Header
 
+#if ASSET_BUNDLE_BROWSER
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
@@ -69,3 +70,4 @@ public class AssetBundleBrowserWrapper
 
 	#endregion Private
 }
+#endif

@@ -7,6 +7,8 @@
    ============================================ */
 #endregion Header
 
+#if ASSET_BUNDLE_BROWSER
+
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
@@ -58,3 +60,4 @@ namespace Jenkins
 		#endregion Private
 	}
 }
+#endif
