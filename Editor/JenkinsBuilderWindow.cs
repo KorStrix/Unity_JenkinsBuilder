@@ -87,7 +87,7 @@ namespace Jenkins
         string _strBuildOutputPath;
 
         [MenuItem("Tools/Build/Show Jenkins Builder Window", priority = -10000)]
-        static public void DoShow_Jenkins_Builder_Window()
+        public static void DoShow_Jenkins_Builder_Window()
         {
             // Get existing open window or if none, make a new one:
             JenkinsBuilderWindow pWindow = (JenkinsBuilderWindow)GetWindow(typeof(JenkinsBuilderWindow), false);
@@ -171,15 +171,15 @@ namespace Jenkins
         const string const_strPrefix_ForDebugLog = "!@#$";
 
         [MenuItem("Tools/Build/Create BuildConfig File")]
-        static public void Create_BuildConfig_Dummy()
+        public static void Create_BuildConfig_Dummy()
         {
             string strContent = JsonUtility.ToJson(new BuildConfig(), true);
             File.WriteAllText(Application.dataPath + "/" + typeof(BuildConfig).Name + ".json", strContent);
             AssetDatabase.Refresh();
         }
 
-        [MenuItem("Tools/Build/Android Build Test")]
-        static public void Build_Android_Project()
+        [MenuItem("Tools/Build/Build Test - Android")]
+        public static void Build_Test_Android()
         {
             BuildConfig pConfig = new BuildConfig();
             BuildTargetGroup eBuildTargetGroup = GetBuildTargetGroup(BuildTarget.Android);
@@ -188,10 +188,19 @@ namespace Jenkins
             DoBuild(pConfig, pConfig.strAbsolute_BuildOutputFolderPath, pConfig.strFileName, BuildTarget.Android);
         }
 
-        static public void Build_Android()
+        [MenuItem("Tools/Build/Build Test - IOS")]
+        public static void Build_Test_IOS()
         {
-            BuildConfig pConfig;
-            if (GetFile_From_CommandLine("-config_path", out pConfig))
+            BuildConfig pConfig = new BuildConfig();
+            BuildTargetGroup eBuildTargetGroup = GetBuildTargetGroup(BuildTarget.iOS);
+            pConfig.strDefineSymbol = PlayerSettings.GetScriptingDefineSymbolsForGroup(eBuildTargetGroup);
+
+            DoBuild(pConfig, pConfig.strAbsolute_BuildOutputFolderPath, pConfig.strFileName, BuildTarget.iOS);
+        }
+        
+        public static void Build_Android()
+        {
+            if (GetFile_From_CommandLine("-config_path", out BuildConfig pConfig))
             {
                 string strBuildOutputFolderPath_CommandLine = GetCommandLineArg("-output_path");
                 string strFileName_CommandLine = GetCommandLineArg("-filename");
@@ -203,7 +212,21 @@ namespace Jenkins
             }
         }
 
-        static public string GetCommandLineArg(string strName)
+        public static void Build_IOS()
+        {
+            if (GetFile_From_CommandLine("-config_path", out BuildConfig pConfig))
+            {
+                string strBuildOutputFolderPath_CommandLine = GetCommandLineArg("-output_path");
+                string strFileName_CommandLine = GetCommandLineArg("-filename");
+
+                string strBuildOutputFolderPath_Final = string.IsNullOrEmpty(strBuildOutputFolderPath_CommandLine) ? pConfig.strAbsolute_BuildOutputFolderPath : strBuildOutputFolderPath_CommandLine;
+                string strFileName_Final = string.IsNullOrEmpty(strFileName_CommandLine) ? pConfig.strFileName : strBuildOutputFolderPath_CommandLine;
+
+                DoBuild(pConfig, strBuildOutputFolderPath_Final, strFileName_Final, BuildTarget.iOS);
+            }
+        }
+        
+        public static string GetCommandLineArg(string strName)
         {
             string[] arrArgument = System.Environment.GetCommandLineArgs();
             for (int i = 0; i < arrArgument.Length; ++i)
@@ -217,7 +240,7 @@ namespace Jenkins
             return null;
         }
 
-        static public bool GetFile_From_CommandLine<T>(string strCommandLine, out T pOutFile)
+        public static bool GetFile_From_CommandLine<T>(string strCommandLine, out T pOutFile)
             where T : new()
         {
             string strPath = GetCommandLineArg(strCommandLine);
@@ -232,7 +255,7 @@ namespace Jenkins
             return true;
         }
 
-        static public System.Exception DoTryParsing_JsonFile<T>(string strJsonFilePath, out T pOutFile)
+        public static System.Exception DoTryParsing_JsonFile<T>(string strJsonFilePath, out T pOutFile)
               where T : new()
         {
             pOutFile = default(T);
@@ -250,7 +273,7 @@ namespace Jenkins
             return null;
         }
 
-        static public string[] GetEnabled_EditorScenes()
+        public static string[] GetEnabled_EditorScenes()
         {
             return EditorBuildSettings.scenes.Where(p => p.enabled).Select(p => p.path).ToArray();
         }
