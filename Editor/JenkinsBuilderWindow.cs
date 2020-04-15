@@ -70,7 +70,6 @@ namespace Jenkins
             PlayerSettings.SetScriptingDefineSymbolsForGroup(eBuildTargetGroup, strDefineSymbol);
             PlayerSettings.productName = strProductName;
         }
-
     }
 
     #region BuilderWindow
