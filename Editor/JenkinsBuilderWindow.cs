@@ -15,7 +15,6 @@
 using UnityEngine;
 using System;
 using System.IO;
-using System.Collections.Generic;
 using System.Linq;
 
 #if UNITY_EDITOR
@@ -24,7 +23,7 @@ using UnityEditor.Build.Reporting;
 
 namespace Jenkins
 {
-    [System.Serializable]
+    [Serializable]
     public class BuildConfig
     {
         public string strAbsolute_BuildOutputFolderPath = Application.dataPath.Replace("/Assets", "") + "/Build";
@@ -36,7 +35,7 @@ namespace Jenkins
 
         public string[] arrBuildSceneNames = Builder.GetEnabled_EditorScenes();
 
-        [System.Serializable]
+        [Serializable]
         public class AndroidSetting
         {
             public string strFullPackageName = PlayerSettings.applicationIdentifier;
@@ -47,7 +46,7 @@ namespace Jenkins
             public string strKeystore_RelativePath;
             public string strKeystore_Password;
 
-            public bool bUse_IL_TO_CPP_Build = true;
+            public bool bUse_IL_TO_CPP_Build = false;
         }
 
         public AndroidSetting pAndroidSetting = new AndroidSetting();
@@ -70,7 +69,6 @@ namespace Jenkins
             PlayerSettings.SetScriptingDefineSymbolsForGroup(eBuildTargetGroup, strDefineSymbol);
             PlayerSettings.productName = strProductName;
         }
-
     }
 
     #region BuilderWindow
@@ -104,7 +102,7 @@ namespace Jenkins
             DrawPath_File("Config", ref _strConfigPath);
             if(EditorGUI.EndChangeCheck())
             {
-                System.Exception pException = Builder.DoTryParsing_JsonFile(_strConfigPath, out _pBuildConfig);
+                Exception pException = Builder.DoTryParsing_JsonFile(_strConfigPath, out _pBuildConfig);
                 if(pException != null)
                 {
                     _strConfigPath = "!! Error !!" + _strConfigPath;
@@ -115,8 +113,9 @@ namespace Jenkins
             DrawPath_Folder("Build Output", ref _strBuildOutputPath);
             GUILayout.Space(10f);
 
-            GUI.enabled = _pBuildConfig != null;
-            if (GUILayout.Button("Build !"))
+            bool bConfigIsNotNull = _pBuildConfig != null;
+            GUI.enabled = bConfigIsNotNull;
+            if (GUILayout.Button("Build !") && bConfigIsNotNull)
             {
                 Builder.DoBuild(_pBuildConfig, _strBuildOutputPath, _pBuildConfig.strFileName, _eBuildTarget);
             }
@@ -124,28 +123,28 @@ namespace Jenkins
             GUILayout.Space(30f);
         }
 
-        private string DrawPath_Folder(string strExplaneName, ref string strFolderPath)
+        private string DrawPath_Folder(string strExplainName, ref string strFolderPath)
         {
-            return DrawPath(strExplaneName, ref strFolderPath, true);
+            return DrawPath(strExplainName, ref strFolderPath, true);
         }
 
-        private string DrawPath_File(string strExplaneName, ref string strFilePath)
+        private string DrawPath_File(string strExplainName, ref string strFilePath)
         {
-            return DrawPath(strExplaneName, ref strFilePath, false);
+            return DrawPath(strExplainName, ref strFilePath, false);
         }
 
-        private string DrawPath(string strExplaneName, ref string strEditPath, bool bIsFolder)
+        private string DrawPath(string strExplainName, ref string strEditPath, bool bIsFolder)
         {
             GUILayout.BeginHorizontal();
 
             if (bIsFolder)
-                GUILayout.Label($"{strExplaneName} Folder Path : ", GUILayout.Width(150f));
+                GUILayout.Label($"{strExplainName} Folder Path : ", GUILayout.Width(150f));
             else
-                GUILayout.Label($"{strExplaneName} File Path : ", GUILayout.Width(150f));
+                GUILayout.Label($"{strExplainName} File Path : ", GUILayout.Width(150f));
 
             GUILayout.Label(strEditPath);
 
-            if (GUILayout.Button($"Edit {strExplaneName}", GUILayout.Width(150f)))
+            if (GUILayout.Button($"Edit {strExplainName}", GUILayout.Width(150f)))
             {
                 string strPath = "";
                 if (bIsFolder)
@@ -202,13 +201,8 @@ namespace Jenkins
         {
             if (GetFile_From_CommandLine("-config_path", out BuildConfig pConfig))
             {
-                string strBuildOutputFolderPath_CommandLine = GetCommandLineArg("-output_path");
-                string strFileName_CommandLine = GetCommandLineArg("-filename");
-
-                string strBuildOutputFolderPath_Final = string.IsNullOrEmpty(strBuildOutputFolderPath_CommandLine) ? pConfig.strAbsolute_BuildOutputFolderPath : strBuildOutputFolderPath_CommandLine;
-                string strFileName_Final = string.IsNullOrEmpty(strFileName_CommandLine) ? pConfig.strFileName : strFileName_CommandLine;
-
-                DoBuild(pConfig, strBuildOutputFolderPath_Final, strFileName_Final, BuildTarget.Android);
+                GetPath_FromConfig(pConfig,out string strBuildOutputFolderPath, out string strFileName);
+                DoBuild(pConfig, strBuildOutputFolderPath, strFileName, BuildTarget.Android);
             }
         }
 
@@ -216,19 +210,14 @@ namespace Jenkins
         {
             if (GetFile_From_CommandLine("-config_path", out BuildConfig pConfig))
             {
-                string strBuildOutputFolderPath_CommandLine = GetCommandLineArg("-output_path");
-                string strFileName_CommandLine = GetCommandLineArg("-filename");
-
-                string strBuildOutputFolderPath_Final = string.IsNullOrEmpty(strBuildOutputFolderPath_CommandLine) ? pConfig.strAbsolute_BuildOutputFolderPath : strBuildOutputFolderPath_CommandLine;
-                string strFileName_Final = string.IsNullOrEmpty(strFileName_CommandLine) ? pConfig.strFileName : strBuildOutputFolderPath_CommandLine;
-
-                DoBuild(pConfig, strBuildOutputFolderPath_Final, strFileName_Final, BuildTarget.iOS);
+                GetPath_FromConfig(pConfig,out string strBuildOutputFolderPath, out string strFileName);
+                DoBuild(pConfig, strBuildOutputFolderPath, strFileName, BuildTarget.iOS);
             }
         }
         
         public static string GetCommandLineArg(string strName)
         {
-            string[] arrArgument = System.Environment.GetCommandLineArgs();
+            string[] arrArgument = Environment.GetCommandLineArgs();
             for (int i = 0; i < arrArgument.Length; ++i)
             {
                 if (arrArgument[i] == strName && arrArgument.Length > i + 1)
@@ -244,7 +233,7 @@ namespace Jenkins
             where T : new()
         {
             string strPath = GetCommandLineArg(strCommandLine);
-            System.Exception pException = DoTryParsing_JsonFile(strPath, out pOutFile);
+            Exception pException = DoTryParsing_JsonFile(strPath, out pOutFile);
             if (pException != null)
             {
                 Debug.LogFormat(const_strPrefix_ForDebugLog + " Error - FilePath : {0}, FilePath : {1}\n" +
@@ -255,7 +244,7 @@ namespace Jenkins
             return true;
         }
 
-        public static System.Exception DoTryParsing_JsonFile<T>(string strJsonFilePath, out T pOutFile)
+        public static Exception DoTryParsing_JsonFile<T>(string strJsonFilePath, out T pOutFile)
               where T : new()
         {
             pOutFile = default(T);
@@ -265,7 +254,7 @@ namespace Jenkins
                 string strConfigJson = File.ReadAllText(strJsonFilePath);
                 pOutFile = JsonUtility.FromJson<T>(strConfigJson);
             }
-            catch (System.Exception pException)
+            catch (Exception pException)
             {
                 return pException;
             }
@@ -283,17 +272,10 @@ namespace Jenkins
 
         public static void DoBuild(BuildConfig pBuildConfig, string strAbsolute_BuildOutputFolderPath, string strFileName, BuildTarget eBuildTarget)
         {
-            BuildTargetGroup eBuildTargetGroup;
-            string strBuildPath;
-            Process_PreBuild(pBuildConfig, strAbsolute_BuildOutputFolderPath, strFileName, eBuildTarget, out eBuildTargetGroup, out strBuildPath);
+            Process_PreBuild(pBuildConfig, strAbsolute_BuildOutputFolderPath, strFileName, eBuildTarget, out var eBuildTargetGroup, out var strBuildPath);
 
-            BuildPlayerOptions sBuildPlayerOptions = new BuildPlayerOptions();
-            sBuildPlayerOptions.scenes = pBuildConfig.arrBuildSceneNames;
-            sBuildPlayerOptions.locationPathName = strBuildPath;
-            sBuildPlayerOptions.target = eBuildTarget;
-            sBuildPlayerOptions.options = BuildOptions.None;
-
-            var pEditorSetting_Backup = SettingToBuildConfig_EditorSetting(pBuildConfig, eBuildTargetGroup);
+            BuildPlayerOptions sBuildPlayerOptions = Generate_BuildPlayerOption(pBuildConfig, eBuildTarget, strBuildPath);
+            PlayerSetting_Backup pEditorSetting_Backup = SettingToBuildConfig_EditorSetting(pBuildConfig, eBuildTargetGroup);
 
             Debug.LogFormat(const_strPrefix_ForDebugLog + " Before Build DefineSymbol TargetGroup : {0}\n" +
                 "Origin Symbol : {1}\n " +
@@ -308,7 +290,7 @@ namespace Jenkins
 
             try
             {
-                var pReport = BuildPipeline.BuildPlayer(sBuildPlayerOptions);
+                BuildReport pReport = BuildPipeline.BuildPlayer(sBuildPlayerOptions);
                 PrintLog(strBuildPath, pReport, pReport.summary);
             }
             catch (Exception e)
@@ -322,6 +304,40 @@ namespace Jenkins
             Debug.LogFormat(const_strPrefix_ForDebugLog + " After Build DefineSymbol Current {0}", PlayerSettings.GetScriptingDefineSymbolsForGroup(eBuildTargetGroup));
         }
 
+        private static BuildPlayerOptions Generate_BuildPlayerOption(BuildConfig pBuildConfig, BuildTarget eBuildTarget,
+            string strBuildPath)
+        {
+            BuildPlayerOptions sBuildPlayerOptions = new BuildPlayerOptions
+            {
+                scenes = pBuildConfig.arrBuildSceneNames,
+                locationPathName = strBuildPath,
+                target = eBuildTarget,
+                options = BuildOptions.None
+            };
+
+            return sBuildPlayerOptions;
+        }
+
+
+        private static void GetPath_FromConfig(BuildConfig pConfig, out string strBuildOutputFolderPath, out string strFileName)
+        {
+            string strBuildOutputFolderPath_CommandLine = GetCommandLineArg("-output_path");
+            string strFileName_CommandLine = GetCommandLineArg("-filename");
+
+            strBuildOutputFolderPath = string.IsNullOrEmpty(strBuildOutputFolderPath_CommandLine)
+                ? pConfig.strAbsolute_BuildOutputFolderPath
+                : strBuildOutputFolderPath_CommandLine;
+
+            if (string.IsNullOrEmpty(strFileName_CommandLine))
+            {
+                strFileName = pConfig.strFileName;
+            }
+            else
+            {
+                strFileName = strFileName_CommandLine;
+                pConfig.bUse_DateTime_Suffix = false;
+            }
+        }
 
         private static PlayerSetting_Backup SettingToBuildConfig_EditorSetting(BuildConfig pBuildConfig, BuildTargetGroup eBuildTargetGroup)
         {
@@ -366,9 +382,8 @@ namespace Jenkins
             if (bUse_DateTime_Suffix)
             {
                 DateTime sDateTimeNow = DateTime.Now;
-                string strDateTime = string.Format("{0}_{1}",
-                    sDateTimeNow.Month.ToString("D2") + sDateTimeNow.Day.ToString("D2"),
-                    sDateTimeNow.Hour.ToString("D2") + sDateTimeNow.Minute.ToString("D2"));
+                string strDateTime =
+                    $"{sDateTimeNow.Month.ToString("D2") + sDateTimeNow.Day.ToString("D2")}_{sDateTimeNow.Hour.ToString("D2") + sDateTimeNow.Minute.ToString("D2")}";
 
                 strBuildPath = strBuildPath + "_" + strDateTime;
             }
@@ -446,12 +461,12 @@ namespace Jenkins
                 int iErrorIndex = 1;
                 foreach (var pStep in pReport.steps)
                 {
-                    for (int i = 0; i < pStep.messages.Length; i++)
+                    foreach (var pMessage in pStep.messages)
                     {
-                        if (pStep.messages[i].type == LogType.Error || pStep.messages[i].type == LogType.Exception)
+                        if (pMessage.type == LogType.Error || pMessage.type == LogType.Exception)
                         {
                             Debug.LogFormat(const_strPrefix_ForDebugLog + " Build Fail Log[{0}] : type : {1}\n" +
-                                " content : {2}", ++iErrorIndex, pStep.messages[i].type, pStep.messages[i].content);
+                                            " content : {2}", ++iErrorIndex, pMessage.type, pMessage.content);
                         }
                     }
                 }
@@ -463,6 +478,7 @@ namespace Jenkins
             switch (eBuildTarget)
             {
                 case BuildTarget.Android: return BuildTargetGroup.Android;
+                case BuildTarget.iOS: return BuildTargetGroup.iOS;
             }
 
             return BuildTargetGroup.Standalone;
