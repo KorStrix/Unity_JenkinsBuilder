@@ -41,7 +41,7 @@ namespace Jenkins
 		public static void Build_Android()
 		{
 			AssetBundleBrowserWrapper pWrapper = new AssetBundleBrowserWrapper();
-			pWrapper.DoBuildBundle(BuildTargetGroup.Android);
+			pWrapper.DoBuildBundle(BuildTarget.Android);
 		}
 
 		
@@ -49,7 +49,7 @@ namespace Jenkins
 		public static void Build_IOS()
 		{
 			AssetBundleBrowserWrapper pWrapper = new AssetBundleBrowserWrapper();
-			pWrapper.DoBuildBundle(BuildTargetGroup.iOS);
+			pWrapper.DoBuildBundle(BuildTarget.iOS);
 		}
 		
 		// ========================================================================== //

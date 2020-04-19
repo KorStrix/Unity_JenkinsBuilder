@@ -69,13 +69,13 @@ public class AssetBundleBrowserWrapper
 #endif
 	}
 
-	public void DoBuildBundle(BuildTargetGroup eBuildTargetGroup)
+	public void DoBuildBundle(BuildTarget eBuildTarget)
 	{
-		_pField_BuildTab_UserData_BuildTarget.SetValue(_pInstance_UserData, (int)eBuildTargetGroup);
+		_pField_BuildTab_UserData_BuildTarget.SetValue(_pInstance_UserData, (int)eBuildTarget);
 
 		UnityEngine.Debug.Log($"!@#$ Start Build Bundle \n" +
 		                      $"Current Platform : {Application.platform} Target : {_pField_BuildTab_UserData_BuildTarget.GetValue(_pInstance_UserData)} \n" +
-		                      $"Symbol : {PlayerSettings.GetScriptingDefineSymbolsForGroup(eBuildTargetGroup)} \n");
+		                      $"Symbol : {PlayerSettings.GetScriptingDefineSymbolsForGroup(EditorUserBuildSettings.selectedBuildTargetGroup)} \n");
 		
 #if ASSET_BUNDLE_BROWSER
 		_pMethod_Build?.Invoke(_pField_BuildTab.GetValue(_pBrowser), null);
