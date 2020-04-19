@@ -7,7 +7,6 @@
    ============================================ */
 #endregion Header
 
-#if ASSET_BUNDLE_BROWSER
 
 using UnityEngine;
 using System.Collections;
@@ -38,13 +37,21 @@ namespace Jenkins
 		/* public - [Do~Somthing] Function 	        */
 
 
-		[MenuItem("Build/Bundle Build Test", priority = 10000)]
-		static public void Build_Android()
+		[MenuItem("Tools/Build/BundleBuild Test - Android", priority = 10000)]
+		public static void Build_Android()
 		{
 			AssetBundleBrowserWrapper pWrapper = new AssetBundleBrowserWrapper();
-			pWrapper.DoBuildBundle();
+			pWrapper.DoBuildBundle(BuildTargetGroup.Android);
 		}
 
+		
+		[MenuItem("Tools/Build/BundleBuild Test - IOS", priority = 10000)]
+		public static void Build_IOS()
+		{
+			AssetBundleBrowserWrapper pWrapper = new AssetBundleBrowserWrapper();
+			pWrapper.DoBuildBundle(BuildTargetGroup.iOS);
+		}
+		
 		// ========================================================================== //
 
 		/* protected - [Override & Unity API]       */
@@ -60,4 +67,3 @@ namespace Jenkins
 		#endregion Private
 	}
 }
-#endif
