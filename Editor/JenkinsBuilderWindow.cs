@@ -19,6 +19,7 @@ using System;
 using System.IO;
 using System.Linq;
 using UnityEditor.Callbacks;
+using UnityEngine.Serialization;
 #if UNITY_EDITOR
 using UnityEditor;
 using UnityEditor.Build.Reporting;
@@ -70,19 +71,33 @@ namespace Jenkins
         public AndroidSetting pAndroidSetting = new AndroidSetting();
 
 
+        /// <summary>
+        /// 유니티 -> XCode Export -> .ipa 에 필요한 모든 설정
+        /// </summary>
         [Serializable]
         public class IOSSetting
         {
-            // 애플 개발자 사이트에서 조회 가능
+            // 애플 개발자 사이트에서 조회 가능, 숫자랑 영어로 된거
             public string strAppleTeamID;
 
             public string strProvisioningProfileName;
-            public string AppleProvisioningProfileID;
+            public string strAppleProvisioningProfileID;
+
+            public string strEntitlementsFileName_Without_ExtensionName;
+            
+            /// <summary>
+            /// 유니티 Asset 경로에서 XCode Project로 카피할 파일 목록, 확장자까지 작성해야 합니다
+            /// </summary>
+            public string[] arrCopy_AssetFilePath_To_XCodeProjectPath;
 
             /// <summary>
             /// XCode 프로젝트에 추가할 Framework, 확장자까지 작성해야 합니다
             /// </summary>
-            public string[] arrXCodeFrameworkToAdd;
+            public string[] arrXCode_Framework_Add;
+
+            public string[] arrXCode_OTHER_LDFLAGS_Add;
+            public string[] arrXCode_OTHER_LDFLAGS_Remove;
+
         }
 
         public IOSSetting pIOSSetting = new IOSSetting();
@@ -352,7 +367,7 @@ namespace Jenkins
             try
             {
                 BuildReport pReport = BuildPipeline.BuildPlayer(sBuildPlayerOptions);
-                PrintLog(strBuildPath, pReport, pReport.summary);
+                PrintBuildResult(strBuildPath, pReport, pReport.summary);
             }
             catch (Exception e)
             {
@@ -372,7 +387,7 @@ namespace Jenkins
         [PostProcessBuild(999999)]
         public static void OnPostprocessBuild(BuildTarget eBuildTarget, string strPath)
         {
-            Debug.Log($"OnPostprocessBuild - BuildTarget : {eBuildTarget} strPath : {strPath}");
+            Debug.Log($"{const_strPrefix_ForDebugLog} OnPostprocessBuild - BuildTarget : {eBuildTarget} strPath : {strPath}");
             if (eBuildTarget != BuildTarget.iOS)
                 return;
 
@@ -384,34 +399,48 @@ namespace Jenkins
 
 
 #region private
+        /// <summary>
+        /// IOS용 XCode Initialize
+        /// </summary>
+        /// <param name="strXCodeProjectPath"></param>
         private static void Init_XCodeProject(string strXCodeProjectPath)
         {
             BuildConfig.IOSSetting pIOSSetting = g_pLastConfig.pIOSSetting;
             var projectPath = strXCodeProjectPath + "/Unity-iPhone.xcodeproj/project.pbxproj";
             
-            Debug.Log($"{nameof(Init_XCodeProject)} Start - {nameof(strXCodeProjectPath)} : {strXCodeProjectPath}");
+            Debug.Log($"{const_strPrefix_ForDebugLog} {nameof(Init_XCodeProject)} Start - {nameof(strXCodeProjectPath)} : {strXCodeProjectPath}\n" +
+                      $"projectPath : {projectPath}");
             
 #if UNITY_IOS
-            PBXProject project = new PBXProject();
-            project.ReadFromFile(projectPath);
+            PBXProject pPBXProject = new PBXProject();
+            pPBXProject.ReadFromFile(projectPath);
             
-            string strTargetGuid = project.TargetGuidByName("Unity-iPhone");
-            project.SetTeamId(strTargetGuid, pIOSSetting.strAppleTeamID);
+            string strTargetGuid = pPBXProject.TargetGuidByName("Unity-iPhone");
+ 
             
-            foreach (string strFrameworkName in pIOSSetting.arrXCodeFrameworkToAdd)
+            // Set Apple Team ID
+            pPBXProject.SetTeamId(strTargetGuid, pIOSSetting.strAppleTeamID);
+            
+            
+            // Copy File Asset To XCode Project
+            foreach(var strFilePath in pIOSSetting.arrCopy_AssetFilePath_To_XCodeProjectPath)
+                CopyFile_Asset_To_XCode(strXCodeProjectPath, strFilePath);
+
+            
+            // Add XCode Framework
+            foreach (string strFramework in pIOSSetting.arrXCode_Framework_Add)
             {
-                project.AddFrameworkToProject(strTargetGuid, strFrameworkName, false);
-                Debug.Log(string.Format("[iOS] add [{0}] to project", strFrameworkName));
+                pPBXProject.AddFrameworkToProject(strTargetGuid, strFramework, false);
+                Debug.Log($"{const_strPrefix_ForDebugLog} Add Framework \"{strFramework}\" to XCode Project");
             }
+            
+
+            // Set XCode OTHER_LDFLAGS
+            pPBXProject.UpdateBuildProperty(strTargetGuid, "OTHER_LDFLAGS", pIOSSetting.arrXCode_OTHER_LDFLAGS_Add, pIOSSetting.arrXCode_OTHER_LDFLAGS_Remove);
             
             #region Sample
             // // Sample of setting build property
             // project.SetBuildProperty(targetGuid, "ENABLE_BITCODE", "NO");
-            //
-            // // Sample of update build property
-            // project.UpdateBuildProperty(targetGuid, "OTHER_LDFLAGS", .XCodeOtherLdFlagsToAdd,
-            //     .XCodeOtherLdFlagsToRemove);
-            //
             
             // Sample of setting compile flags
             // var guid = pbxProject.FindFileGuidByProjectPath("Classes/UI/Keyboard.mm");
@@ -420,18 +449,63 @@ namespace Jenkins
             // pbxProject.SetCompileFlagsForFile(targetGuid, guid, flags);
             #endregion Sample
 
-            string targetEntitlementsFilePath = strXCodeProjectPath + "/production.entitlements";
-            project.AddCapability(strTargetGuid, PBXCapabilityType.PushNotifications, targetEntitlementsFilePath, true);
-            project.AddCapability(strTargetGuid, PBXCapabilityType.InAppPurchase, null, true);
-            project.AddCapability(strTargetGuid, PBXCapabilityType.GameCenter, null, true);
+            string strTargetEntitlementsFilePath = strXCodeProjectPath + "/" + pIOSSetting.strEntitlementsFileName_Without_ExtensionName + ".entitlements";
+            pPBXProject.AddCapability(strTargetGuid, PBXCapabilityType.PushNotifications, strTargetEntitlementsFilePath, true);
+            pPBXProject.AddCapability(strTargetGuid, PBXCapabilityType.InAppPurchase, null, true);
+            pPBXProject.AddCapability(strTargetGuid, PBXCapabilityType.GameCenter, null, true);
 
-            project.AddBuildProperty(strTargetGuid, "FRAMEWORK_SEARCH_PATHS", "$(PROJECT_DIR)");
+            pPBXProject.AddBuildProperty(strTargetGuid, "FRAMEWORK_SEARCH_PATHS", "$(PROJECT_DIR)");
+            
+            SetIOS_AuthToken(pPBXProject, strTargetGuid);
 
             // Apply settings
-            File.WriteAllText(projectPath, project.WriteToString());
+            File.WriteAllText(projectPath, pPBXProject.WriteToString());
 #else
-            Debug.Log($"{nameof(Init_XCodeProject)} - Not Define Symbol is Not IOS");
+            string a = "", b = null;
+            if (a.Equals(b))
+            {
+            }
+
+            Debug.Log($"{const_strPrefix_ForDebugLog} {nameof(Init_XCodeProject)} - Not Define Symbol is Not IOS");
 #endif       
+        }
+
+#if UNITY_IOS
+        private static void SetIOS_AuthToken(PBXProject project, string strTargetGuid)
+        {
+            var token = project.GetBuildPropertyForAnyConfig(strTargetGuid, "USYM_UPLOAD_AUTH_TOKEN");
+            if (string.IsNullOrEmpty(token))
+            {
+                token = "FakeToken";
+            }
+
+            project.SetBuildProperty(strTargetGuid, "USYM_UPLOAD_AUTH_TOKEN", token);
+        }
+#endif
+
+        private static void CopyFile_Asset_To_XCode(string strXCodeProjectPath, string strFilePath)
+        {
+            string strFileName = strFilePath;
+            int iLastIndex = strFilePath.LastIndexOf("/");
+            if(iLastIndex != -1)
+                strFileName = strFilePath.Substring(iLastIndex + 1);
+            
+            string strFilePath_Origin = Application.dataPath + "/" + strFilePath;
+            string strFilePath_Dest = strXCodeProjectPath + "/" + strFileName;
+
+            try
+            {
+                FileUtil.DeleteFileOrDirectory(strFilePath_Dest);
+                
+                
+                FileUtil.CopyFileOrDirectory(strFilePath_Origin, strFilePath_Dest);
+            }
+            catch (Exception e)
+            {
+                Debug.Log($"{const_strPrefix_ForDebugLog} Copy File Error FileName : \"{strFileName}\" // \"{strFilePath_Origin}\" to \"{strFilePath_Dest}\"" + e);
+            }
+
+            Debug.Log($"{const_strPrefix_ForDebugLog} Copy File FileName : \"{strFileName}\" // \"{strFilePath_Origin}\" to \"{strFilePath_Dest}\"");
         }
 
         private static void SetupPlist(string strXCodeProjectPath)
@@ -599,10 +673,10 @@ namespace Jenkins
             PlayerSettings.Android.keystoreName = Application.dataPath + pAndroidSetting.strKeystore_RelativePath;
             PlayerSettings.Android.keystorePass = pAndroidSetting.strKeystore_Password;
 
-            if (pAndroidSetting.bUse_IL_TO_CPP_Build)
-                PlayerSettings.SetScriptingBackend(BuildTargetGroup.Android, ScriptingImplementation.IL2CPP);
-            else
-                PlayerSettings.SetScriptingBackend(BuildTargetGroup.Android, ScriptingImplementation.Mono2x);
+            // if (pAndroidSetting.bUse_IL_TO_CPP_Build)
+            //     PlayerSettings.SetScriptingBackend(BuildTargetGroup.Android, ScriptingImplementation.IL2CPP);
+            // else
+            //     PlayerSettings.SetScriptingBackend(BuildTargetGroup.Android, ScriptingImplementation.Mono2x);
 
             Debug.LogFormat(const_strPrefix_ForDebugLog + " Build Setting [Android]\n" +
                             "strPackageName : {0}\n" +
@@ -617,7 +691,7 @@ namespace Jenkins
         }
 
 
-        private static void PrintLog(string strPath, BuildReport pReport, BuildSummary pSummary)
+        private static void PrintBuildResult(string strPath, BuildReport pReport, BuildSummary pSummary)
         {
             Debug.LogFormat(const_strPrefix_ForDebugLog + " Path : {0}, Build Result : {1}", strPath, pSummary.result);
 
