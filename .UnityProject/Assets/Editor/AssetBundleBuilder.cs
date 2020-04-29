@@ -1,11 +1,12 @@
-﻿#region Header
+#region Header
 /*	============================================
  *	Aurthor 			    : Strix
- *	Initial Creation Date 	: #CREATIONDATE#
+ *	Initial Creation Date 	: 2020-04-10
  *	Summary 		        : 
  *  Template 		        : For Unity Editor V1
    ============================================ */
 #endregion Header
+
 
 using UnityEngine;
 using System.Collections;
@@ -36,13 +37,21 @@ namespace Jenkins
 		/* public - [Do~Somthing] Function 	        */
 
 
-		[MenuItem("Build/Bundle Build Test", priority = 10000)]
-		static public void Build_Android()
+		[MenuItem("Tools/Build/BundleBuild Test - Android", priority = 10000)]
+		public static void Build_Android()
 		{
 			AssetBundleBrowserWrapper pWrapper = new AssetBundleBrowserWrapper();
-			pWrapper.DoBuildBundle();
+			pWrapper.DoBuildBundle(BuildTarget.Android);
 		}
 
+		
+		[MenuItem("Tools/Build/BundleBuild Test - IOS", priority = 10000)]
+		public static void Build_IOS()
+		{
+			AssetBundleBrowserWrapper pWrapper = new AssetBundleBrowserWrapper();
+			pWrapper.DoBuildBundle(BuildTarget.iOS);
+		}
+		
 		// ========================================================================== //
 
 		/* protected - [Override & Unity API]       */
