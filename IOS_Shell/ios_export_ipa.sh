@@ -1,6 +1,9 @@
 #!/bin/bash
+# 주의사항
+# Window에서 파일 수정후 맥에서 실행시 줄바꿈 코드(EOL)를 Unix 형식으로 변경바랍니다. (Window/MAC은 안됨)
 
 WORKSPACE=$1
+AppleTeamID=$2
 
 cd "$WORKSPACE"
 
@@ -11,6 +14,7 @@ TARGET_IPA_FILE_NAME="${ProjectName}_${BUILD_VER}.ipa"
 # XCODE_PROJECT_DIR="${WORKSPACE}/${BUILD_VER}/${ProjectName}_xcode"
 XCODE_PROJECT_DIR="Build"
 IPA_EXPORT_PATH="${XCODE_PROJECT_DIR}/.."
+
 
 echo "BUILD VER is [$BUILD_VER]"
 echo "TARGET IPA FILE NAME is [$TARGET_IPA_FILE_NAME]"
@@ -41,6 +45,6 @@ echo "Export from ARCHIVE to IPA"
 
 xcodebuild -allowProvisioningUpdates \
            -exportArchive \
-           -exportOptionsPlist "${XCODE_PROJECT_DIR}/exportOptions.plist" \
+           -exportOptionsPlist "exportOptions.plist" \
            -exportPath "${IPA_EXPORT_PATH}" \
            -archivePath "${XCODE_PROJECT_DIR}/../archive/${BUILD_VER}.xcarchive"
