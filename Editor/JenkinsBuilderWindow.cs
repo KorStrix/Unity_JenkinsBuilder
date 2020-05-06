@@ -85,6 +85,8 @@ namespace Jenkins
             public string strProvisioningProfileName;
             public string strAppleProvisioningProfileID;
 
+            public string strBuild_Identifier;
+            
             public string strEntitlementsFileName_Without_ExtensionName;
             
             /// <summary>
@@ -423,7 +425,6 @@ namespace Jenkins
             // Set Apple Team ID
             pPBXProject.SetTeamId(strTargetGuid, pIOSSetting.strAppleTeamID);
             
-            
             // Copy File Asset To XCode Project
             foreach(var strFilePath in pIOSSetting.arrCopy_AssetFilePath_To_XCodeProjectPath)
                 CopyFile_Asset_To_XCode(strXCodeProjectPath, strFilePath);
@@ -498,8 +499,6 @@ namespace Jenkins
             try
             {
                 FileUtil.DeleteFileOrDirectory(strFilePath_Dest);
-                
-                
                 FileUtil.CopyFileOrDirectory(strFilePath_Origin, strFilePath_Dest);
             }
             catch (Exception e)
@@ -512,7 +511,7 @@ namespace Jenkins
 
         private static void SetupPlist(string strXCodeProjectPath)
         {
-            Debug.Log($"{nameof(SetupPlist)} Start - {nameof(strXCodeProjectPath)} : {strXCodeProjectPath}");
+            Debug.Log($"{const_strPrefix_ForDebugLog} {nameof(SetupPlist)} Start - {nameof(strXCodeProjectPath)} : {strXCodeProjectPath}");
             
             // Property List(.plist) Default Name
             const string strInfoPlistName = "Info.plist";
@@ -531,8 +530,9 @@ namespace Jenkins
 
             // Apply editing settings to Info.plist
             p_plistDocument.WriteToFile(str_plistPath);
+            Debug.Log($"{const_strPrefix_ForDebugLog} {nameof(SetupPlist)} - WriteToFile {str_plistPath}");
 #else
-            Debug.Log($"{nameof(SetupPlist)} - Not Define Symbol is Not IOS");
+            Debug.Log($"{const_strPrefix_ForDebugLog} {nameof(SetupPlist)} - Not Define Symbol is Not IOS");
 #endif
         }
 
@@ -598,6 +598,10 @@ namespace Jenkins
                     BuildSetting_Android(pBuildConfig.pAndroidSetting);
                     strBuildPath += ".apk";
                     break;
+                
+                case BuildTarget.iOS:
+                    BuildSetting_IOS(pBuildConfig.pIOSSetting);
+                    break;
             }
         }
 
@@ -661,19 +665,30 @@ namespace Jenkins
             }
         }
 
+        private static void BuildSetting_IOS(BuildConfig.IOSSetting pSetting)
+        {
+            if (string.IsNullOrEmpty(pSetting.strBuild_Identifier) == false)
+                PlayerSettings.applicationIdentifier = pSetting.strBuild_Identifier;
+            
+            Debug.LogFormat(const_strPrefix_ForDebugLog + " Build Setting [IOS]\n" +
+                            "strPackageName : {0}\n",
+                PlayerSettings.applicationIdentifier
+              );
+        }
+        
         /// <summary>
         /// 안드로이드 세팅
         /// </summary>
-        private static void BuildSetting_Android(BuildConfig.AndroidSetting pAndroidSetting)
+        private static void BuildSetting_Android(BuildConfig.AndroidSetting pSetting)
         {
-            if (string.IsNullOrEmpty(pAndroidSetting.strFullPackageName) == false)
-                PlayerSettings.applicationIdentifier = pAndroidSetting.strFullPackageName;
+            if (string.IsNullOrEmpty(pSetting.strFullPackageName) == false)
+                PlayerSettings.applicationIdentifier = pSetting.strFullPackageName;
 
-            PlayerSettings.Android.keyaliasName = pAndroidSetting.strKeyalias_Name;
-            PlayerSettings.Android.keyaliasPass = pAndroidSetting.strKeyalias_Password;
+            PlayerSettings.Android.keyaliasName = pSetting.strKeyalias_Name;
+            PlayerSettings.Android.keyaliasPass = pSetting.strKeyalias_Password;
 
-            PlayerSettings.Android.keystoreName = Application.dataPath + pAndroidSetting.strKeystore_RelativePath;
-            PlayerSettings.Android.keystorePass = pAndroidSetting.strKeystore_Password;
+            PlayerSettings.Android.keystoreName = Application.dataPath + pSetting.strKeystore_RelativePath;
+            PlayerSettings.Android.keystorePass = pSetting.strKeystore_Password;
 
             // if (pAndroidSetting.bUse_IL_TO_CPP_Build)
             //     PlayerSettings.SetScriptingBackend(BuildTargetGroup.Android, ScriptingImplementation.IL2CPP);
@@ -688,7 +703,7 @@ namespace Jenkins
                 PlayerSettings.applicationIdentifier,
                 PlayerSettings.Android.keyaliasName, PlayerSettings.Android.keyaliasPass,
                 PlayerSettings.Android.keystoreName, PlayerSettings.Android.keystorePass,
-                pAndroidSetting.bUse_IL_TO_CPP_Build);
+                pSetting.bUse_IL_TO_CPP_Build);
             ;
         }
 
