@@ -26,6 +26,32 @@ using UnityEditor.Build.Reporting;
 
 namespace Jenkins
 {
+    public partial class BuildConfig
+    {
+        [Serializable]
+        public class AndroidSetting
+        {
+            // 예시) com.CompanyName.ProductName 
+            public string strFullPackageName = PlayerSettings.applicationIdentifier;
+
+            public string strKeyalias_Name;
+            public string strKeyalias_Password;
+
+            public string strKeystore_RelativePath;
+            public string strKeystore_Password;
+
+            /// <summary>
+            /// CPP 빌드를 할지 체크, CPP빌드는 오래 걸리므로 Test빌드가 아닌 Alpha 빌드부터 하는걸 권장
+            /// 아직 미지원
+            /// </summary>
+            public bool bUse_IL_TO_CPP_Build = false;
+
+            public int iBundleVersionCode = PlayerSettings.Android.bundleVersionCode;
+        }
+
+        public AndroidSetting pAndroidSetting = new AndroidSetting();
+    }
+    
     public partial class Builder
     {
         [MenuItem("Tools/Build/Build Test - Android")]

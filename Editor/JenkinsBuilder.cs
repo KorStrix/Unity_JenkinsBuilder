@@ -28,7 +28,7 @@ using UnityEditor.Build.Reporting;
 namespace Jenkins
 {
     [Serializable]
-    public class BuildConfig
+    public partial class BuildConfig
     {
         /// <summary>
         /// 출력할 파일 명, 젠킨스에서 -filename (filename:string) 로 설정가능
@@ -55,61 +55,6 @@ namespace Jenkins
         /// </summary>
         public string strAppVersion;
         
-        [Serializable]
-        public class AndroidSetting
-        {
-            // 예시) com.CompanyName.ProductName 
-            public string strFullPackageName = PlayerSettings.applicationIdentifier;
-
-            public string strKeyalias_Name;
-            public string strKeyalias_Password;
-
-            public string strKeystore_RelativePath;
-            public string strKeystore_Password;
-
-            /// <summary>
-            /// CPP 빌드를 할지 체크, CPP빌드는 오래 걸리므로 Test빌드가 아닌 Alpha 빌드부터 하는걸 권장
-            /// 아직 미지원
-            /// </summary>
-            public bool bUse_IL_TO_CPP_Build = false;
-
-            public int iBundleVersionCode = PlayerSettings.Android.bundleVersionCode;
-        }
-
-        public AndroidSetting pAndroidSetting = new AndroidSetting();
-
-
-        /// <summary>
-        /// 유니티 -> XCode Export -> .ipa 에 필요한 모든 설정
-        /// </summary>
-        [Serializable]
-        public class IOSSetting
-        {
-            // 애플 개발자 사이트에서 조회 가능, 숫자랑 영어로 된거
-            public string strAppleTeamID;
-
-            public string strBundle_Identifier;
-            public string strEntitlementsFileName_Without_ExtensionName;
-            
-            /// <summary>
-            /// 유니티 Asset 경로에서 XCode Project로 카피할 파일 목록, 확장자까지 작성해야 합니다
-            /// </summary>
-            public string[] arrCopy_AssetFilePath_To_XCodeProjectPath;
-
-            /// <summary>
-            /// XCode 프로젝트에 추가할 Framework, 확장자까지 작성해야 합니다
-            /// </summary>
-            public string[] arrXCode_Framework_Add;
-
-            public string[] arrXCode_OTHER_LDFLAGS_Add;
-            public string[] arrXCode_OTHER_LDFLAGS_Remove;
-
-            public string strBuildNumber = PlayerSettings.iOS.buildNumber;
-
-        }
-
-        public IOSSetting pIOSSetting = new IOSSetting();
-
 
         // 출력할 폴더 및 파일은 Jenkins에서 처리할 예정
         [Obsolete("Jenkins에서 CommandLine으로 처리할 예정")]
@@ -368,9 +313,7 @@ namespace Jenkins
             if (bUse_DateTime_Suffix)
             {
                 DateTime sDateTimeNow = DateTime.Now;
-                string strDateTime =
-                    $"{sDateTimeNow.Month.ToString("D2") + sDateTimeNow.Day.ToString("D2")}_{sDateTimeNow.Hour.ToString("D2") + sDateTimeNow.Minute.ToString("D2")}";
-
+                string strDateTime = sDateTimeNow.ToString("MMdd_hhmm");
                 strBuildPath = strBuildPath + "_" + strDateTime;
             }
 

@@ -31,6 +31,40 @@ using UnityEditor.iOS.Xcode;
 
 namespace Jenkins
 {
+    public partial class BuildConfig
+    {
+        /// <summary>
+        /// 유니티 -> XCode Export -> .ipa 에 필요한 모든 설정
+        /// </summary>
+        [Serializable]
+        public class IOSSetting
+        {
+            // 애플 개발자 사이트에서 조회 가능, 숫자랑 영어로 된거
+            public string strAppleTeamID;
+
+            public string strBundle_Identifier;
+            public string strEntitlementsFileName_Without_ExtensionName;
+            
+            /// <summary>
+            /// 유니티 Asset 경로에서 XCode Project로 카피할 파일 목록, 확장자까지 작성해야 합니다
+            /// </summary>
+            public string[] arrCopy_AssetFilePath_To_XCodeProjectPath;
+
+            /// <summary>
+            /// XCode 프로젝트에 추가할 Framework, 확장자까지 작성해야 합니다
+            /// </summary>
+            public string[] arrXCode_Framework_Add;
+
+            public string[] arrXCode_OTHER_LDFLAGS_Add;
+            public string[] arrXCode_OTHER_LDFLAGS_Remove;
+
+            public string strBuildNumber = PlayerSettings.iOS.buildNumber;
+
+        }
+
+        public IOSSetting pIOSSetting = new IOSSetting();
+    }
+    
     public partial class Builder
     {
         [MenuItem("Tools/Build/Build Test - IOS")]
