@@ -40,7 +40,7 @@ namespace Jenkins
 
         public static void Build_Android()
         {
-            if (GetFile_From_CommandLine(const_CommandLine_ConfigFilePath, out BuildConfig pConfig))
+            if (GetFile_From_CommandLine(const_mapCommandLine[ECommandLineList.config_path], out BuildConfig pConfig))
             {
                 GetPath_FromConfig(pConfig, out string strBuildOutputFolderPath, out string strFileName);
                 DoBuild(pConfig, strBuildOutputFolderPath, strFileName, BuildTarget.Android);
@@ -63,6 +63,12 @@ namespace Jenkins
 
             PlayerSettings.Android.keystoreName = Application.dataPath + pSetting.strKeystore_RelativePath;
             PlayerSettings.Android.keystorePass = pSetting.strKeystore_Password;
+
+            string strBundleVersionCode_FromCommandLine = GetCommandLineArg(const_mapCommandLine[ECommandLineList.android_bundle_versioncode]);
+            if(int.TryParse(strBundleVersionCode_FromCommandLine, out int iBundleVersionCode))
+                PlayerSettings.Android.bundleVersionCode = iBundleVersionCode;
+            else
+                PlayerSettings.Android.bundleVersionCode = pSetting.iBundleVersionCode;
 
             // if (pAndroidSetting.bUse_IL_TO_CPP_Build)
             //     PlayerSettings.SetScriptingBackend(BuildTargetGroup.Android, ScriptingImplementation.IL2CPP);

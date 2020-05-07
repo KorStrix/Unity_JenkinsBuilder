@@ -45,7 +45,7 @@ namespace Jenkins
 
         public static void Build_IOS()
         {
-            if (GetFile_From_CommandLine(const_CommandLine_ConfigFilePath, out BuildConfig pConfig))
+            if (GetFile_From_CommandLine(const_mapCommandLine[ECommandLineList.config_path], out BuildConfig pConfig))
             {
                 GetPath_FromConfig(pConfig, out string strBuildOutputFolderPath, out string strFileName);
                 DoBuild(pConfig, strBuildOutputFolderPath, strFileName, BuildTarget.iOS);
@@ -184,6 +184,11 @@ namespace Jenkins
             // var urlInnerArray = urlDict.CreateArray("CFBundleURLSchemes");
             // urlInnerArray.AddString("hogehogeValue");
 
+            string exitsOnSuspendKey = "UIApplicationExitsOnSuspend";
+            var rootValues = p_plistDocument.root.values;
+            if(rootValues.ContainsKey(exitsOnSuspendKey))
+                rootValues.Remove(exitsOnSuspendKey);
+            
             // Apply editing settings to Info.plist
             p_plistDocument.WriteToFile(str_plistPath);
             Debug.Log($"{const_strPrefix_ForDebugLog} {nameof(Setup_XCodePlist)} - WriteToFile {str_plistPath}");
@@ -196,10 +201,17 @@ namespace Jenkins
         {
             if (string.IsNullOrEmpty(pSetting.strBundle_Identifier) == false)
                 PlayerSettings.applicationIdentifier = pSetting.strBundle_Identifier;
+
+            string strVersion_FromCommandLine = GetCommandLineArg(const_mapCommandLine[ECommandLineList.ios_version]);
+            if(string.IsNullOrEmpty(strVersion_FromCommandLine) == false)
+                PlayerSettings.iOS.buildNumber = strVersion_FromCommandLine;
+            else
+                PlayerSettings.iOS.buildNumber = pSetting.strBuildNumber;
             
             Debug.LogFormat(const_strPrefix_ForDebugLog + " Build Setting [IOS]\n" +
-                            "strPackageName : {0}\n",
-                PlayerSettings.applicationIdentifier
+                            "strPackageName : {0}\n" +
+                            "strBuildNumber : {1}",
+                PlayerSettings.applicationIdentifier, PlayerSettings.iOS.buildNumber
             );
         }
 

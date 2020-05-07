@@ -21,6 +21,7 @@ using System.Linq;
 using UnityEditor.Callbacks;
 
 #if UNITY_EDITOR
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEditor.Build.Reporting;
 
@@ -46,6 +47,14 @@ namespace Jenkins
         /// </summary>
         public string[] arrBuildSceneNames = Builder.GetEnabled_EditorScenes();
 
+        
+            
+        /// <summary>
+        /// 빌드 타겟이 IOS일 때는 Player Setting - IOS - Version
+        /// 빌드 타겟이 안드로이드일 때는 Player Setting - Android - BundleVersionCode
+        /// </summary>
+        public string strAppVersion;
+        
         [Serializable]
         public class AndroidSetting
         {
@@ -60,8 +69,11 @@ namespace Jenkins
 
             /// <summary>
             /// CPP 빌드를 할지 체크, CPP빌드는 오래 걸리므로 Test빌드가 아닌 Alpha 빌드부터 하는걸 권장
+            /// 아직 미지원
             /// </summary>
             public bool bUse_IL_TO_CPP_Build = false;
+
+            public int iBundleVersionCode = PlayerSettings.Android.bundleVersionCode;
         }
 
         public AndroidSetting pAndroidSetting = new AndroidSetting();
@@ -91,6 +103,8 @@ namespace Jenkins
 
             public string[] arrXCode_OTHER_LDFLAGS_Add;
             public string[] arrXCode_OTHER_LDFLAGS_Remove;
+
+            public string strBuildNumber = PlayerSettings.iOS.buildNumber;
 
         }
 
@@ -134,11 +148,27 @@ namespace Jenkins
     /// </summary>
     public partial class Builder
     {
-        const string const_CommandLine_FileName = "-filename";
-        const string const_CommandLine_ConfigFilePath = "-config_path";
-        const string const_CommandLine_OutputPath = "-output_path";
         const string const_strPrefix_ForDebugLog = "!@#$";
 
+        public enum ECommandLineList
+        {
+            filename,
+            config_path,
+            output_path,
+            android_bundle_versioncode,
+            ios_version,
+        }
+
+        private static readonly Dictionary<ECommandLineList, string> const_mapCommandLine =
+            new Dictionary<ECommandLineList, string>()
+            {
+                {ECommandLineList.filename, "-filename"},
+                {ECommandLineList.config_path, "-config_path"},
+                {ECommandLineList.output_path, "-output_path"},
+                {ECommandLineList.android_bundle_versioncode, "-android_versioncode"},
+                {ECommandLineList.ios_version, "-ios_version"}
+            };
+        
         private static BuildConfig g_pLastConfig;
         
         #region public
@@ -268,8 +298,8 @@ namespace Jenkins
         private static void GetPath_FromConfig(BuildConfig pConfig, out string strBuildOutputFolderPath,
             out string strFileName)
         {
-            string strBuildOutputFolderPath_CommandLine = GetCommandLineArg(const_CommandLine_OutputPath);
-            string strFileName_CommandLine = GetCommandLineArg(const_CommandLine_FileName);
+            string strBuildOutputFolderPath_CommandLine = GetCommandLineArg(const_mapCommandLine[ECommandLineList.output_path]);
+            string strFileName_CommandLine = GetCommandLineArg(const_mapCommandLine[ECommandLineList.filename]);
 
             strBuildOutputFolderPath = string.IsNullOrEmpty(strBuildOutputFolderPath_CommandLine)
                 ? pConfig.strAbsolute_BuildOutputFolderPath
