@@ -263,7 +263,7 @@ namespace Jenkins
             string strVersion_FromCommandLine = GetCommandLineArg(const_mapCommandLine[ECommandLineList.ios_version]);
             if(string.IsNullOrEmpty(strVersion_FromCommandLine) == false)
                 PlayerSettings.iOS.buildNumber = strVersion_FromCommandLine;
-            else
+            else if(string.IsNullOrEmpty(pSetting.strBuildNumber) == false)
                 PlayerSettings.iOS.buildNumber = pSetting.strBuildNumber;
             
             Debug.LogFormat(const_strPrefix_ForDebugLog + " Build Setting [IOS]\n" +
