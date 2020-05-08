@@ -31,7 +31,6 @@ namespace Jenkins
     public class JenkinsBuilderWindow : EditorWindow
     {
         BuildConfig _pBuildConfig;
-        BuildTarget _eBuildTarget = BuildTarget.Android;
 
         string _strConfigPath;
         string _strBuildOutputPath;
@@ -54,7 +53,7 @@ namespace Jenkins
             DrawPath_File("Config", ref _strConfigPath);
             if (EditorGUI.EndChangeCheck())
             {
-                Exception pException = Builder.DoTryParsing_JsonFile(_strConfigPath, out _pBuildConfig);
+                Exception pException = Builder.DoTryParsing_JsonFile_SO(_strConfigPath, out _pBuildConfig);
                 if (pException != null)
                 {
                     _strConfigPath = "!! Error !!" + _strConfigPath;
@@ -67,11 +66,17 @@ namespace Jenkins
 
             bool bConfigIsNotNull = _pBuildConfig != null;
             GUI.enabled = bConfigIsNotNull;
-            if (GUILayout.Button("Build !") && bConfigIsNotNull)
+            
+            if (GUILayout.Button("Android Build !") && bConfigIsNotNull)
             {
-                Builder.DoBuild(_pBuildConfig, _strBuildOutputPath, _pBuildConfig.strFileName, _eBuildTarget);
+                Builder.DoBuild(_pBuildConfig, _strBuildOutputPath, _pBuildConfig.strFileName, BuildTarget.Android);
             }
 
+            if (GUILayout.Button("IOS Build !") && bConfigIsNotNull)
+            {
+                Builder.DoBuild(_pBuildConfig, _strBuildOutputPath, _pBuildConfig.strFileName, BuildTarget.iOS);
+            }
+            
             GUILayout.Space(30f);
         }
 

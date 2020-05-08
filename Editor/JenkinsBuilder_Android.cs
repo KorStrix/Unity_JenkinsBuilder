@@ -66,7 +66,7 @@ namespace Jenkins
 
         public static void Build_Android()
         {
-            if (GetFile_From_CommandLine(const_mapCommandLine[ECommandLineList.config_path], out BuildConfig pConfig))
+            if (GetFile_From_CommandLine_SO(const_mapCommandLine[ECommandLineList.config_path], out BuildConfig pConfig))
             {
                 GetPath_FromConfig(pConfig, out string strBuildOutputFolderPath, out string strFileName);
                 DoBuild(pConfig, strBuildOutputFolderPath, strFileName, BuildTarget.Android);

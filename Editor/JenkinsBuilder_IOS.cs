@@ -16,6 +16,7 @@
 
 using UnityEngine;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEditor.Callbacks;
@@ -34,7 +35,7 @@ namespace Jenkins
     public partial class BuildConfig
     {
         /// <summary>
-        /// 유니티 -> XCode Export -> .ipa 에 필요한 모든 설정
+        /// 유니티 -> XCode Export -> XCode Archive -> .ipa 에 필요한 모든 설정
         /// </summary>
         [Serializable]
         public class IOSSetting
@@ -58,8 +59,16 @@ namespace Jenkins
             public string[] arrXCode_OTHER_LDFLAGS_Add;
             public string[] arrXCode_OTHER_LDFLAGS_Remove;
 
-            public string strBuildNumber = PlayerSettings.iOS.buildNumber;
+            public string strBuildNumber;
 
+            [Serializable]
+            public class PLIST_ADD
+            {
+                public string strKey;
+                public string strValue;
+            }
+
+            public PLIST_ADD[] arrAddPlist = new PLIST_ADD[0];
         }
 
         public IOSSetting pIOSSetting = new IOSSetting();
@@ -79,7 +88,7 @@ namespace Jenkins
 
         public static void Build_IOS()
         {
-            if (GetFile_From_CommandLine(const_mapCommandLine[ECommandLineList.config_path], out BuildConfig pConfig))
+            if (GetFile_From_CommandLine_SO(const_mapCommandLine[ECommandLineList.config_path], out BuildConfig pConfig))
             {
                 GetPath_FromConfig(pConfig, out string strBuildOutputFolderPath, out string strFileName);
                 DoBuild(pConfig, strBuildOutputFolderPath, strFileName, BuildTarget.iOS);
@@ -202,7 +211,8 @@ namespace Jenkins
         private static void Setup_XCodePlist(string strXCodeProjectPath)
         {
             Debug.Log($"{const_strPrefix_ForDebugLog} {nameof(Setup_XCodePlist)} Start - {nameof(strXCodeProjectPath)} : {strXCodeProjectPath}");
-            
+            BuildConfig.IOSSetting pIOSSetting = g_pLastConfig.pIOSSetting;
+   
             // Property List(.plist) Default Name
             const string strInfoPlistName = "Info.plist";
 
@@ -218,10 +228,24 @@ namespace Jenkins
             // var urlInnerArray = urlDict.CreateArray("CFBundleURLSchemes");
             // urlInnerArray.AddString("hogehogeValue");
 
-            string exitsOnSuspendKey = "UIApplicationExitsOnSuspend";
-            var rootValues = p_plistDocument.root.values;
-            if(rootValues.ContainsKey(exitsOnSuspendKey))
-                rootValues.Remove(exitsOnSuspendKey);
+            
+            // 해당 키는 IOS 업로드 시 해당 키는 지원하지 않는다는 에러 발생으로 인해 제거
+            string strExitsOnSuspendKey = "UIApplicationExitsOnSuspend";
+            var arrRootValues = p_plistDocument.root.values;
+            if(arrRootValues.ContainsKey(strExitsOnSuspendKey))
+                arrRootValues.Remove(strExitsOnSuspendKey);
+
+            foreach (var pProperty in pIOSSetting.arrAddPlist)
+            {
+                if(arrRootValues.ContainsKey(pProperty.strKey))
+                    arrRootValues[pProperty.strKey] = new PlistElementString(pProperty.strValue);
+                else
+                    arrRootValues.Add(pProperty.strKey, new PlistElementString(pProperty.strValue));
+            }
+            
+            if(arrRootValues.ContainsKey(strExitsOnSuspendKey) == false)
+                arrRootValues.Remove(strExitsOnSuspendKey);
+            
             
             // Apply editing settings to Info.plist
             p_plistDocument.WriteToFile(str_plistPath);

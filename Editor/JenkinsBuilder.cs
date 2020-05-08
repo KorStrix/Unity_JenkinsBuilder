@@ -18,52 +18,15 @@ using UnityEngine;
 using System;
 using System.IO;
 using System.Linq;
-using UnityEditor.Callbacks;
 
 #if UNITY_EDITOR
 using System.Collections.Generic;
 using UnityEditor;
+using UnityEditor.Callbacks;
 using UnityEditor.Build.Reporting;
 
 namespace Jenkins
 {
-    [Serializable]
-    public partial class BuildConfig
-    {
-        /// <summary>
-        /// 출력할 파일 명, 젠킨스에서 -filename (filename:string) 로 설정가능
-        /// </summary>
-        public string strFileName = "Build";
-
-        public string strDefineSymbol;
-
-        /// <summary>
-        /// 설치한 디바이스에 표기될 이름
-        /// </summary>
-        public string strProductName = PlayerSettings.productName;
-
-        /// <summary>
-        /// 빌드에 포함할 씬들
-        /// </summary>
-        public string[] arrBuildSceneNames = Builder.GetEnabled_EditorScenes();
-
-        
-            
-        /// <summary>
-        /// 빌드 타겟이 IOS일 때는 Player Setting - IOS - Version
-        /// 빌드 타겟이 안드로이드일 때는 Player Setting - Android - BundleVersionCode
-        /// </summary>
-        public string strAppVersion;
-        
-
-        // 출력할 폴더 및 파일은 Jenkins에서 처리할 예정
-        [Obsolete("Jenkins에서 CommandLine으로 처리할 예정")]
-        public string strAbsolute_BuildOutputFolderPath = Application.dataPath.Replace("/Assets", "") + "/Build";
-
-        [Obsolete("Jenkins에서 CommandLine으로 처리할 예정")]
-        public bool bUse_DateTime_Suffix = true;
-    }
-
     /// <summary>
     /// 에디터 플레이어 빌드 전 세팅 (빌드 후 되돌리기용)
     /// </summary>
@@ -155,6 +118,22 @@ namespace Jenkins
             return true;
         }
 
+        public static bool GetFile_From_CommandLine_SO<T>(string strCommandLine, out T pOutFile)
+            where T : ScriptableObject
+        {
+            string strPath = GetCommandLineArg(strCommandLine);
+            Exception pException = DoTryParsing_JsonFile_SO(strPath, out pOutFile);
+            if (pException != null)
+            {
+                Debug.LogFormat(const_strPrefix_ForDebugLog + " Error - FilePath : {0}, FilePath : {1}\n" +
+                                " Error : {2}", strCommandLine, strPath, pException);
+                return false;
+            }
+
+            return true;
+        }
+
+        
         public static Exception DoTryParsing_JsonFile<T>(string strJsonFilePath, out T pOutFile)
             where T : new()
         {
@@ -173,6 +152,24 @@ namespace Jenkins
             return null;
         }
 
+        public static Exception DoTryParsing_JsonFile_SO<T>(string strJsonFilePath, out T pOutFile)
+            where T : ScriptableObject
+        {
+            pOutFile = ScriptableObject.CreateInstance<T>();
+
+            try
+            {
+                string strConfigJson = File.ReadAllText(strJsonFilePath);
+                JsonUtility.FromJsonOverwrite(strConfigJson, pOutFile);
+            }
+            catch (Exception pException)
+            {
+                return pException;
+            }
+
+            return null;
+        }
+        
         public static string[] GetEnabled_EditorScenes()
         {
             return EditorBuildSettings.scenes.Where(p => p.enabled).Select(p => p.path).ToArray();
@@ -335,7 +332,7 @@ namespace Jenkins
                         DirectoryInfo pDirectory = new DirectoryInfo(strAbsolute_BuildOutputFolderPath);
                         foreach (var pFile in pDirectory.GetFiles())
                         {
-                            // IL2CPP 파일로 빌드 시 자동으로 생기는 파일, 삭제해도 무방
+                            // IL2CPP 파일로 빌드 시 자동으로 생inf기는 파일, 삭제해도 무방
                             if (pFile.Extension == ".zip" && pFile.Name.Contains("symbols"))
                             {
                                 Debug.Log(const_strPrefix_ForDebugLog + " Delete : " + pFile.Name);
