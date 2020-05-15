@@ -4,20 +4,19 @@
 
 WORKSPACE=$1
 AppleTeamID=$2
+IPA_FILENAME=$3
 
 cd "$WORKSPACE"
 
 ProjectName="KH"
 BUILD_VER="1"
 
-TARGET_IPA_FILE_NAME="${ProjectName}_${BUILD_VER}.ipa"
-# XCODE_PROJECT_DIR="${WORKSPACE}/${BUILD_VER}/${ProjectName}_xcode"
 XCODE_PROJECT_DIR="Build"
 IPA_EXPORT_PATH="${XCODE_PROJECT_DIR}/.."
 
 
 echo "BUILD VER is [$BUILD_VER]"
-echo "TARGET IPA FILE NAME is [$TARGET_IPA_FILE_NAME]"
+echo "TARGET IPA FILE NAME is [$IPA_FILENAME].ipa"
 
 echo "XCODE_PROJECT_DIR=${XCODE_PROJECT_DIR}"
 cd "$XCODE_PROJECT_DIR"
@@ -48,3 +47,7 @@ xcodebuild -allowProvisioningUpdates \
            -exportOptionsPlist "exportOptions.plist" \
            -exportPath "${IPA_EXPORT_PATH}" \
            -archivePath "${XCODE_PROJECT_DIR}/../archive/${BUILD_VER}.xcarchive"
+		   
+		   
+echo "Rename Unity-iPhone.ipa for SCM revision Build"
+mv "${IPA_EXPORT_PATH}/Unity-iPhone.ipa" "${IPA_EXPORT_PATH}/${IPA_FILENAME}.ipa"

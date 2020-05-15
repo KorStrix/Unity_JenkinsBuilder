@@ -28,12 +28,12 @@ namespace Jenkins
 		/// <summary>
 		/// 설치한 디바이스에 표기될 이름
 		/// </summary>
-		public string strProductName = PlayerSettings.productName;
+		public string strProductName;
 
 		/// <summary>
 		/// 빌드에 포함할 씬들
 		/// </summary>
-		public string[] arrBuildSceneNames = Builder.GetEnabled_EditorScenes();
+		public string[] arrBuildSceneNames; 
 
 
 
@@ -46,9 +46,18 @@ namespace Jenkins
 
 		// 출력할 폴더 및 파일은 Jenkins에서 처리할 예정
 		[Obsolete("Jenkins에서 CommandLine으로 처리할 예정")]
-		public string strAbsolute_BuildOutputFolderPath = Application.dataPath.Replace("/Assets", "") + "/Build";
+		public string strAbsolute_BuildOutputFolderPath;
 
 		[Obsolete("Jenkins에서 CommandLine으로 처리할 예정")]
-		public bool bUse_DateTime_Suffix = true;
+		public bool bUse_DateTime_Suffix;
+
+		public void DoInit()
+		{
+			strProductName = PlayerSettings.productName;
+			arrBuildSceneNames = Builder.GetEnabled_EditorScenes();
+			
+			strAbsolute_BuildOutputFolderPath = Application.dataPath.Replace("/Assets", "") + "/Build";
+			bUse_DateTime_Suffix = true;
+		}
 	}
 }

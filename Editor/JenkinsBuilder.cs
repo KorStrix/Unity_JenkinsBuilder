@@ -216,6 +216,31 @@ namespace Jenkins
             Debug.LogFormat(const_strPrefix_ForDebugLog + " After Build DefineSymbol Current {0}",
                 PlayerSettings.GetScriptingDefineSymbolsForGroup(eBuildTargetGroup));
         }
+        
+        /// <summary>
+        /// Command Line으로 실행할 때 partial class file에 있으면 못찾음..
+        /// </summary>
+        public static void Build_Android()
+        {
+            if (GetFile_From_CommandLine_SO(const_mapCommandLine[ECommandLineList.config_path], out BuildConfig pConfig))
+            {
+                GetPath_FromConfig(pConfig, out string strBuildOutputFolderPath, out string strFileName);
+                DoBuild(pConfig, strBuildOutputFolderPath, strFileName, BuildTarget.Android);
+            }
+        }
+
+        /// <summary>
+        /// Command Line으로 실행할 때 partial class file에 있으면 못찾음..
+        /// </summary>
+        public static void Build_IOS()
+        {
+            if (GetFile_From_CommandLine_SO(const_mapCommandLine[ECommandLineList.config_path], out BuildConfig pConfig))
+            {
+                GetPath_FromConfig(pConfig, out string strBuildOutputFolderPath, out string strFileName);
+                DoBuild(pConfig, strBuildOutputFolderPath, strFileName, BuildTarget.iOS);
+            }
+        }
+        
         #endregion public
         
         // ==============================================================================================
