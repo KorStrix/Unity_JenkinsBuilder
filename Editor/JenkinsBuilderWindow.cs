@@ -45,52 +45,66 @@ namespace Jenkins
             pWindow.Show();
         }
 
+        private void OnEnable()
+        {
+            _strConfigPath = PlayerPrefs.GetString($"{nameof(JenkinsBuilderWindow)}_{nameof(_strConfigPath)}");
+            CheckConfigPath();
+
+            _strBuildOutputPath = PlayerPrefs.GetString($"{nameof(JenkinsBuilderWindow)}_{nameof(_strBuildOutputPath)}");
+        }
+
         private void OnGUI()
         {
             GUILayout.Space(10f);
 
             EditorGUI.BeginChangeCheck();
-            DrawPath_File("Config", ref _strConfigPath);
+            DrawPath_File("Config", ref _strConfigPath, 
+                (strPath) => PlayerPrefs.SetString($"{nameof(JenkinsBuilderWindow)}_{nameof(_strConfigPath)}", strPath));
             if (EditorGUI.EndChangeCheck())
             {
-                Exception pException = Builder.DoTryParsing_JsonFile_SO(_strConfigPath, out _pBuildConfig);
-                if (pException != null)
-                {
-                    _strConfigPath = "!! Error !!" + _strConfigPath;
-                    Debug.LogError($"Json Parsing Fail Path : {_strConfigPath}\n {pException}", this);
-                }
+                CheckConfigPath();
             }
 
-            DrawPath_Folder("Build Output", ref _strBuildOutputPath);
+            DrawPath_Folder("Build Output", ref _strBuildOutputPath,
+                (strPath) => PlayerPrefs.SetString($"{nameof(JenkinsBuilderWindow)}_{nameof(_strBuildOutputPath)}", strPath));
             GUILayout.Space(10f);
 
             bool bConfigIsNotNull = _pBuildConfig != null;
             GUI.enabled = bConfigIsNotNull;
-            
-            if (GUILayout.Button("Android Build !") && bConfigIsNotNull)
+
+            GUILayout.BeginHorizontal();
             {
-                Builder.DoBuild(_pBuildConfig, _strBuildOutputPath, _pBuildConfig.strFileName, BuildTarget.Android);
+                if (GUILayout.Button("Android Build !") && bConfigIsNotNull)
+                {
+                    Builder.DoBuild(_pBuildConfig, _strBuildOutputPath, _pBuildConfig.strFileName, BuildTarget.Android);
+                }
+
+                if (GUILayout.Button("IOS Build !") && bConfigIsNotNull)
+                {
+                    Builder.DoBuild(_pBuildConfig, _strBuildOutputPath, _pBuildConfig.strFileName, BuildTarget.iOS);
+                }
+            }
+            GUILayout.EndHorizontal();
+
+            if (GUILayout.Button("Open BuildFolder Path !"))
+            {
+                System.Diagnostics.Process.Start(_strBuildOutputPath);
             }
 
-            if (GUILayout.Button("IOS Build !") && bConfigIsNotNull)
-            {
-                Builder.DoBuild(_pBuildConfig, _strBuildOutputPath, _pBuildConfig.strFileName, BuildTarget.iOS);
-            }
-            
             GUILayout.Space(30f);
         }
 
-        private string DrawPath_Folder(string strExplainName, ref string strFolderPath)
+        private string DrawPath_Folder(string strExplainName, ref string strFolderPath, Action<string> OnChangePath)
         {
-            return DrawPath(strExplainName, ref strFolderPath, true);
+            return DrawPath(strExplainName, ref strFolderPath, OnChangePath, true);
         }
 
-        private string DrawPath_File(string strExplainName, ref string strFilePath)
+        private string DrawPath_File(string strExplainName, ref string strFilePath, Action<string> OnChangePath)
         {
-            return DrawPath(strExplainName, ref strFilePath, false);
+            return DrawPath(strExplainName, ref strFilePath, OnChangePath, false);
         }
 
-        private string DrawPath(string strExplainName, ref string strEditPath, bool bIsFolder)
+        private string DrawPath(string strExplainName, ref string strEditPath, Action<string> OnChangePath, bool bIsFolder)
         {
             GUILayout.BeginHorizontal();
 
@@ -110,12 +124,24 @@ namespace Jenkins
                     strPath = EditorUtility.OpenFilePanel("File Path", "", "");
 
                 strEditPath = strPath;
+                OnChangePath?.Invoke(strPath);
             }
 
             GUILayout.EndHorizontal();
 
             return strEditPath;
         }
+
+        private void CheckConfigPath()
+        {
+            Exception pException = Builder.DoTryParsing_JsonFile_SO(_strConfigPath, out _pBuildConfig);
+            if (pException != null)
+            {
+                _strConfigPath = "!! Error !!" + _strConfigPath;
+                Debug.LogError($"Json Parsing Fail Path : {_strConfigPath}\n {pException}", this);
+            }
+        }
+
     }
 }
 
