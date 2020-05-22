@@ -19,10 +19,10 @@
 using UnityEngine;
 using System;
 using System.Collections.Generic;
-using UnityEditor.Callbacks;
 
 #if UNITY_EDITOR
 using UnityEditor;
+using UnityEditor.Callbacks;
 using System.Linq;
 using UnityEngine.Assertions.Must;
 
@@ -95,6 +95,8 @@ namespace Jenkins
     
     public partial class Builder
     {
+        public const int const_iPostBuildCallbackOrder = 777;
+
         [MenuItem("Tools/Build/Build Test - IOS")]
         public static void Build_Test_IOS()
         {
@@ -105,7 +107,7 @@ namespace Jenkins
             DoBuild(pConfig, pConfig.strAbsolute_BuildOutputFolderPath, pConfig.strFileName, BuildTarget.iOS);
         }
 
-        [PostProcessBuild(999999)]
+        [PostProcessBuild(const_iPostBuildCallbackOrder)]
         public static void OnPostprocessBuild(BuildTarget eBuildTarget, string strPath)
         {
             Debug.Log($"{const_strPrefix_ForDebugLog} OnPostprocessBuild - BuildTarget : {eBuildTarget} strPath : {strPath}");
