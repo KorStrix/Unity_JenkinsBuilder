@@ -49,5 +49,5 @@ xcodebuild -allowProvisioningUpdates \
            -archivePath "${XCODE_PROJECT_DIR}/../archive/${BUILD_VER}.xcarchive"
 		   
 		   
-echo "Rename Unity-iPhone.ipa for SCM revision Build"
-mv "${IPA_EXPORT_PATH}/Unity-iPhone.ipa" "${IPA_EXPORT_PATH}/${IPA_FILENAME}.ipa"
+# echo "Rename Unity-iPhone.ipa for SCM revision Build"
+# mv "${IPA_EXPORT_PATH}/Unity-iPhone.ipa" "${IPA_EXPORT_PATH}/${IPA_FILENAME}.ipa"
