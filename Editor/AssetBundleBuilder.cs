@@ -1,6 +1,6 @@
 #region Header
 /*	============================================
- *	Aurthor 			    : Strix
+ *	Author   			    : Strix
  *	Initial Creation Date 	: 2020-04-10
  *	Summary 		        : 
  *  Template 		        : For Unity Editor V1
@@ -34,7 +34,7 @@ namespace Jenkins
 
 		// ========================================================================== //
 
-		/* public - [Do~Somthing] Function 	        */
+		/* public - [Do~Something] Function 	        */
 
 
 		[MenuItem("Tools/Build/BundleBuild Test - Android", priority = 10000)]
