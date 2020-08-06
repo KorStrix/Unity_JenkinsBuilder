@@ -38,25 +38,21 @@ Tools/Build에 메뉴가 뜨면 성공!
 3. 수정 완료 후 Tools/Build/Show Jenkins Builder Window를 통해 윈도우를 엽니다.
 4. 아까 작성한 Config File Path를 설정 후 빌드 파일을 어디에 생성할지 세팅합니다.
 5. Android or IOS Build를 합니다.
-
-5-1. 빌드 하기 전 주의사항 ) 프로젝트의 Platform이 해당 플랫폼인지 확인합니다.
-5-2. AOS는 APK를 바로 빌드할 수 있지만, IOS의 경우 유니티에선 Xcode Project로 Export밖에 못합니다.
+* 빌드 하기 전 주의사항 ) 프로젝트의 Platform이 해당 플랫폼인지 확인합니다.
+* AOS는 APK를 바로 빌드할 수 있지만, IOS의 경우 유니티에선 Xcode Project로 Export밖에 못합니다.
 
 6. APK or XCode Project가 세팅한 Output path에 나오면 성공!
 
 ### 2-2. 젠킨스 - 안드로이드 연결
 1. 젠킨스 프로젝트를 생성 합니다.
-
-1-1. 젠킨스 프로젝트 생성 관련 내용은 여기서 다루지 않습니다.
+*. 젠킨스 프로젝트 생성 관련 내용은 여기서 다루지 않습니다.
 2. 젠킨스 프로젝트 구성 - Build 항목에 Invoke Unity3D Editor 항목이 있습니다. 여기서 Editor command line arguments를 수정할 예정입니다.
-
-2-1. 이 항목에는 Unity Default CommandLine과 이 프로젝트의 CommandLine을 같이 쓰며 CommandLine을 통해 **"어떻게"** 유니티를 실행시키고, 이 프로젝트의 빌드 스크립트를 **"어떻게"** 실행하는지를 세팅하는 곳입니다.
-2-2. 유니티 에디터의 커맨드라인 중 -quit -batchmode를 넣습니다. 이에 대한 설명은 유니티 메뉴얼[(링크)](https://docs.unity3d.com/kr/530/Manual/CommandLineArguments.html)를 참고합니다.
-2-3. 
+* 이 항목에는 Unity Default CommandLine과 이 프로젝트의 CommandLine을 같이 쓰며 CommandLine을 통해 **"어떻게"** 유니티를 실행시키고, 이 프로젝트의 빌드 스크립트를 **"어떻게"** 실행하는지를 세팅하는 곳입니다.
+* 유니티 에디터의 커맨드라인 중 -quit -batchmode를 넣습니다. 이에 대한 설명은 유니티 메뉴얼[(링크)](https://docs.unity3d.com/kr/530/Manual/CommandLineArguments.html)를 참고합니다.
+* 하단의 라인도 연달아 삽입합니다.
 ```
 -executeMethod Jenkins.Builder.Build_Android -config_path ${YOUR CONFIG PATH}.json -output_path ${JENKINS_HOME}/jobs/${JOB_NAME}/builds/${BUILD_NUMBER}/archive
 ```
-를 삽입합니다.
 여기서 YOUR CONFIG PATH에 Build Config 파일의 경로를 세팅합니다.
 다른 커맨드 라인을 보고싶으시면 스크립트[(링크)](https://github.com/KorStrix/Unity_JenkinsBuilder/blob/master/Editor/JenkinsBuilder.cs)를 참고바랍니다.
 
