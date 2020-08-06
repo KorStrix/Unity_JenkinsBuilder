@@ -48,7 +48,7 @@ Tools/Build에 메뉴가 뜨면 성공!
 *. 젠킨스 프로젝트 생성 관련 내용은 여기서 다루지 않습니다.
 2. 젠킨스 프로젝트 구성 - Build 항목에 Invoke Unity3D Editor 항목이 있습니다. 여기서 Editor command line arguments를 수정할 예정입니다.
 * 이 항목에는 Unity Default CommandLine과 이 프로젝트의 CommandLine을 같이 쓰며 CommandLine을 통해 **"어떻게"** 유니티를 실행시키고, 이 프로젝트의 빌드 스크립트를 **"어떻게"** 실행하는지를 세팅하는 곳입니다.
-* 유니티 에디터의 커맨드라인 중 -quit -batchmode를 넣습니다. 이에 대한 설명은 유니티 메뉴얼[(링크)](https://docs.unity3d.com/kr/530/Manual/CommandLineArguments.html)를 참고합니다.
+* 유니티 에디터의 커맨드라인 중 -quit -batchmode -logFile log.txt를 넣습니다. 이에 대한 설명은 유니티 메뉴얼[(링크)](https://docs.unity3d.com/kr/530/Manual/CommandLineArguments.html)를 참고합니다.
 * 하단의 라인도 연달아 삽입합니다.
 ```
 -executeMethod Jenkins.Builder.Build_Android -config_path YOUR_CONFIG_PATH.json -output_path ${JENKINS_HOME}/jobs/${JOB_NAME}/builds/${BUILD_NUMBER}/archive
