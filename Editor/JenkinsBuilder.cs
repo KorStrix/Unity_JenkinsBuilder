@@ -22,7 +22,6 @@ using System.Linq;
 #if UNITY_EDITOR
 using System.Collections.Generic;
 using UnityEditor;
-using UnityEditor.Callbacks;
 using UnityEditor.Build.Reporting;
 
 namespace Jenkins
