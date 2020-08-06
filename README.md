@@ -51,9 +51,12 @@ Tools/Build에 메뉴가 뜨면 성공!
 * 유니티 에디터의 커맨드라인 중 -quit -batchmode를 넣습니다. 이에 대한 설명은 유니티 메뉴얼[(링크)](https://docs.unity3d.com/kr/530/Manual/CommandLineArguments.html)를 참고합니다.
 * 하단의 라인도 연달아 삽입합니다.
 ```
--executeMethod Jenkins.Builder.Build_Android -config_path ${YOUR CONFIG PATH}.json -output_path ${JENKINS_HOME}/jobs/${JOB_NAME}/builds/${BUILD_NUMBER}/archive
+-executeMethod Jenkins.Builder.Build_Android -config_path YOUR_CONFIG_PATH.json -output_path ${JENKINS_HOME}/jobs/${JOB_NAME}/builds/${BUILD_NUMBER}/archive
 ```
-여기서 YOUR CONFIG PATH에 Build Config 파일의 경로를 세팅합니다.
+여기서 YOUR_CONFIG_PATH에 Build Config 파일의 경로를 세팅합니다.
 다른 커맨드 라인을 보고싶으시면 스크립트[(링크)](https://github.com/KorStrix/Unity_JenkinsBuilder/blob/master/Editor/JenkinsBuilder.cs)를 참고바랍니다.
+
+- ${JENKINS_HOME}, ${JOB_NAME}, ${BUILD_NUMBER}의 경우 Jenkins 환경변수입니다.
+
 
 3. Build를 한 뒤 Archive에 APK파일이 있으면 성공!
