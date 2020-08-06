@@ -4,11 +4,11 @@
 정확하게는 외부에서 커맨드라인을 통해 원하는 빌드를 뽑는 툴이며 편의상 Jenkins Builder로 칭합니다.
 
 
-## 1. 설치방법
+# 1. 설치방법
 
-### 주의) 유니티 에디터로 작업하시지 마시고 파일 탐색기를 통해 작업하시기 바랍니다.
+## 주의) 유니티 에디터로 작업하시지 마시고 파일 탐색기를 통해 작업하시기 바랍니다.
 
-### 1-1. UnityProject/Packages/manifest.json 파일 수정
+## 1-1. UnityProject/Packages/manifest.json 파일 수정
 
 manifest.json파일을 찾으신 뒤
 원하시는 라인에 하단의 라인을 추가합니다. 
@@ -19,19 +19,19 @@ manifest.json파일을 찾으신 뒤
 Unity에서 packages를 인식 후 알아서 형식이 변경됩니다.
 
 
-### 1-2. github 프로젝트를 다운받은 후 Unity Project에 통째로 탑재
+## 1-2. github 프로젝트를 다운받은 후 Unity Project에 통째로 탑재
 
 1. github에서 이 프로젝트를 다운받습니다.
 2. 설치할 유니티 프로젝트 폴더에 Pacakages 폴더 안에 이 프로젝트 폴더를 넣습니다.
 3. 유니티 에디터를 새로고침 합니다.
 
-### 해당 프로젝트에 정상 설치되었는지 확인 방법
+## 해당 프로젝트에 정상 설치되었는지 확인 방법
 **Tools/Build에 메뉴가 뜨면 성공!**
 
 ---
-## 2. 빌드 테스트
+# 2. 빌드 테스트
 
-### 2-1. Build Config 생성 및 Editor에서 바로 빌드 테스트
+## 2-1. Build Config 생성 및 Editor에서 바로 빌드 테스트
 1. 유니티 에디터의 상단 탭 - Tools/Build/Create Build Config Exmaple File을 생성합니다.
 2. Build Config는 Json 형식으로 이루어져 있으며, 각 항목당 설명은 스크립트에 주석[(링크)](https://github.com/KorStrix/Unity_JenkinsBuilder/blob/master/Editor/BuildConfig.cs)으로 달았습니다.
 이를 참고하며 Build Config 파일을 프로젝트에 맞게 수정합니다.
@@ -43,11 +43,12 @@ Unity에서 packages를 인식 후 알아서 형식이 변경됩니다.
 
 6. **APK or XCode Project가 세팅한 Output path에 나오면 성공!**
 
-### 2-2. 젠킨스 - 안드로이드 빌드 테스트
+---
+## 2-2. 젠킨스 - 안드로이드 빌드 테스트
 
 안드로이드는 크게 어렵지 않기 때문에 자세한 설명을 생략합니다.
 
-#### 빌드 방법
+### 빌드 방법
 
 1. 젠킨스 프로젝트를 생성 합니다.
 *. 젠킨스 프로젝트 생성 관련 내용은 여기서 다루지 않습니다.
@@ -66,19 +67,20 @@ Unity에서 packages를 인식 후 알아서 형식이 변경됩니다.
 
 3. **Build를 한 뒤 Archive에 APK파일이 있으면 성공!**
 
-### 2-3. 젠킨스 - IOS 빌드 테스트
+---
+## 2-3. 젠킨스 - IOS 빌드 테스트
 
-#### 주의사항
+### 주의사항
 **IOS 빌드를 위해선 MAC OS의 PC와 Apple 개발자 계정이 필요합니다.**
 
-#### 개요
+### 개요
 안드로이드의 경우 PC -> APK 추출 -> 선택에 따라 -> APK 스토어 업로드까지 크게 어렵지는 않으나,
 
 IOS의 경우 ipa를 공유하려면 
 PC -> XCode Project -> ipa 추출 -> Appstore Connect 업로드까지 해아 하며,
 PC -> Xcode Project 과정에서  ipa -> Appstore Connect 업로드에 필요한 plist(property list) 등을 함께 Xcode Project에 담아야 합니다. 이것은 Config File로 작업할 수 있습니다.
 
-#### 빌드 방법
+### 빌드 방법
 1. 젠킨스 프로젝트 생성 후 프로젝트 구성으로 갑니다.
 2. Build에 Execute Shell 작업을 추가하고 하단의 내용을 적습니다.
 ```
