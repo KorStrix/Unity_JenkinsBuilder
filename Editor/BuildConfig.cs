@@ -30,10 +30,11 @@ namespace Jenkins
 		/// </summary>
 		public string strProductName;
 
-		/// <summary>
-		/// 빌드에 포함할 씬들
-		/// </summary>
-		public string[] arrBuildSceneNames; 
+        /// <summary>
+        /// 빌드에 포함할 씬들, 확장자는 안쓰셔도 됩니다.
+        /// <para>예시) ["Assets/SomethingScene_1", "Assets/SomethingScene_1"]</para>
+        /// </summary>
+        public string[] arrBuildSceneNames; 
 
 
 

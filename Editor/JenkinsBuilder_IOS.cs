@@ -18,13 +18,10 @@
 
 using UnityEngine;
 using System;
-using System.Collections.Generic;
 
 #if UNITY_EDITOR
 using UnityEditor;
 using UnityEditor.Callbacks;
-using System.Linq;
-using UnityEngine.Assertions.Must;
 
 #if UNITY_IOS
 using System.IO;
@@ -44,11 +41,15 @@ namespace Jenkins
             // 애플 개발자 사이트에서 조회 가능, 숫자랑 영어로 된거
             public string strAppleTeamID;
 
+            /// <summary>
+            /// Apple에서 세팅된 net.Company.Product 형식의 string
+            /// </summary>
             public string strBundle_Identifier;
             public string strEntitlementsFileName_Without_ExtensionName;
             
             /// <summary>
             /// 유니티 Asset 경로에서 XCode Project로 카피할 파일 목록, 확장자까지 작성해야 합니다
+            /// <para>UnityProject/Assets/ 기준</para>
             /// </summary>
             public string[] arrCopy_AssetFilePath_To_XCodeProjectPath;
 
@@ -71,7 +72,14 @@ namespace Jenkins
             /// </summary>
             public string[] arrHTTPAddress;
 
+            /// <summary>
+            /// 출시할 빌드 버전
+            /// </summary>
             public string strBuildVersion;
+
+            /// <summary>
+            /// 빌드 번호, 이미 앱스토어에 올렸으면 그 다음 항상 1씩 올려야 합니다. 안그럼 앱스토어에서 안받음
+            /// </summary>
             public string strBuildNumber;
 
             [Serializable]
@@ -98,6 +106,7 @@ namespace Jenkins
         public const int const_iPostBuildCallbackOrder = 777;
 
         [MenuItem("Tools/Build/Build Test - IOS")]
+        // ReSharper disable once UnusedMember.Global
         public static void Build_Test_IOS()
         {
             BuildConfig pConfig = new BuildConfig();
@@ -108,9 +117,9 @@ namespace Jenkins
         }
 
         [PostProcessBuild(const_iPostBuildCallbackOrder)]
-        public static void OnPostprocessBuild(BuildTarget eBuildTarget, string strPath)
+        public static void OnPostProcessBuild(BuildTarget eBuildTarget, string strPath)
         {
-            Debug.Log($"{const_strPrefix_ForDebugLog} OnPostprocessBuild - BuildTarget : {eBuildTarget} strPath : {strPath}");
+            Debug.Log($"{const_strPrefix_ForDebugLog} {nameof(OnPostProcessBuild)} - BuildTarget : {eBuildTarget} strPath : {strPath}");
             if (eBuildTarget != BuildTarget.iOS)
                 return;
 
@@ -123,6 +132,7 @@ namespace Jenkins
         /// <summary>
         /// IOS용 XCode Initialize
         /// </summary>
+        // ReSharper disable once UnusedParameter.Local
         private static void Init_XCodeProject(string strXCodeProjectPath)
         {
 #if UNITY_IOS
@@ -228,6 +238,7 @@ namespace Jenkins
             Debug.Log($"{const_strPrefix_ForDebugLog} Copy File FileName : \"{strFileName}\" // \"{strFilePath_Origin}\" to \"{strFilePath_Dest}\"");
         }
 
+        // ReSharper disable once UnusedParameter.Local
         private static void Setup_XCodePlist(string strXCodeProjectPath)
         {
 #if UNITY_IOS

@@ -16,13 +16,9 @@
 
 using UnityEngine;
 using System;
-using System.IO;
-using System.Linq;
-using UnityEditor.Callbacks;
 
 #if UNITY_EDITOR
 using UnityEditor;
-using UnityEditor.Build.Reporting;
 
 namespace Jenkins
 {
@@ -37,6 +33,11 @@ namespace Jenkins
             public string strKeyalias_Name;
             public string strKeyalias_Password;
 
+            /// <summary>
+            /// Keystore 파일의 경로입니다. `파일경로/파일명.keystore` 까지 쓰셔야 합니다.
+            /// <para>UnityProject/Asset/ 기준의 상대 경로입니다. </para>
+            /// <para>예를들어 UnityProject/Asset 폴더 밑에 example.keystore를 넣으셨으면 "/example.keystore" 입니다.</para>
+            /// </summary>
             public string strKeystore_RelativePath;
             public string strKeystore_Password;
 

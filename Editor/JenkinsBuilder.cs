@@ -59,9 +59,21 @@ namespace Jenkins
 
         public enum ECommandLineList
         {
+            /// <summary>
+            /// 결과물이 나오는 파일 명
+            /// </summary>
             filename,
+
+            /// <summary>
+            /// 컨피그 파일이 있는 절대 경로
+            /// </summary>
             config_path,
+
+            /// <summary>
+            /// 결과물이 나오는 절대 경로
+            /// </summary>
             output_path,
+
             android_bundle_versioncode,
             ios_version,
         }
@@ -171,7 +183,10 @@ namespace Jenkins
         
         public static string[] GetEnabled_EditorScenes()
         {
-            return EditorBuildSettings.scenes.Where(p => p.enabled).Select(p => p.path).ToArray();
+            return EditorBuildSettings.scenes.
+                Where(p => p.enabled).
+                Select(p => p.path.Replace(".unity", "")).
+                ToArray();
         }
 
 
@@ -251,7 +266,7 @@ namespace Jenkins
         {
             BuildPlayerOptions sBuildPlayerOptions = new BuildPlayerOptions
             {
-                scenes = pBuildConfig.arrBuildSceneNames,
+                scenes = pBuildConfig.arrBuildSceneNames.Select(p => p += ".unity").ToArray(),
                 locationPathName = strBuildPath,
                 target = eBuildTarget,
                 options = BuildOptions.None
