@@ -26,7 +26,7 @@ Unity에서 packages를 인식 후 알아서 형식이 변경됩니다.
 3. 유니티 에디터를 새로고침 합니다.
 
 ### 해당 프로젝트에 정상 설치되었는지 확인 방법
-Tools/Build에 메뉴가 뜨면 성공!
+**Tools/Build에 메뉴가 뜨면 성공!**
 
 ---
 ## 2. 빌드 테스트
@@ -41,9 +41,14 @@ Tools/Build에 메뉴가 뜨면 성공!
 * 빌드 하기 전 주의사항 ) 프로젝트의 Platform이 해당 플랫폼인지 확인합니다.
 * AOS는 APK를 바로 빌드할 수 있지만, IOS의 경우 유니티에선 Xcode Project로 Export밖에 못합니다.
 
-6. APK or XCode Project가 세팅한 Output path에 나오면 성공!
+6. **APK or XCode Project가 세팅한 Output path에 나오면 성공!**
 
-### 2-2. 젠킨스 - 안드로이드 연결
+### 2-2. 젠킨스 - 안드로이드 빌드 테스트
+
+안드로이드는 크게 어렵지 않기 때문에 자세한 설명을 생략합니다.
+
+#### 빌드 방법
+
 1. 젠킨스 프로젝트를 생성 합니다.
 *. 젠킨스 프로젝트 생성 관련 내용은 여기서 다루지 않습니다.
 2. 젠킨스 프로젝트 구성 - Build 항목에 Invoke Unity3D Editor 항목이 있습니다. 여기서 Editor command line arguments를 수정할 예정입니다.
@@ -59,4 +64,36 @@ Tools/Build에 메뉴가 뜨면 성공!
 - ${JENKINS_HOME}, ${JOB_NAME}, ${BUILD_NUMBER}의 경우 Jenkins 환경변수입니다.
 
 
-3. Build를 한 뒤 Archive에 APK파일이 있으면 성공!
+3. **Build를 한 뒤 Archive에 APK파일이 있으면 성공!**
+
+### 2-3. 젠킨스 - IOS 빌드 테스트
+
+#### 주의사항
+**IOS 빌드를 위해선 MAC OS의 PC와 Apple 개발자 계정이 필요합니다.**
+
+#### 개요
+안드로이드의 경우 PC -> APK 추출 -> 선택에 따라 -> APK 스토어 업로드까지 크게 어렵지는 않으나,
+
+IOS의 경우 ipa를 공유하려면 
+PC -> XCode Project -> ipa 추출 -> Appstore Connect 업로드까지 해아 하며,
+PC -> Xcode Project 과정에서  ipa -> Appstore Connect 업로드에 필요한 plist(property list) 등을 함께 Xcode Project에 담아야 합니다. 이것은 Config File로 작업할 수 있습니다.
+
+#### 빌드 방법
+1. 젠킨스 프로젝트 생성 후 프로젝트 구성으로 갑니다.
+2. Build에 Execute Shell 작업을 추가하고 하단의 내용을 적습니다.
+```
+# 폴더 내 모든 걸 비우기
+rm -r ${WORKSPACE}/Build/
+```
+3. Build에 Invoke Unity3D Editor/Editor command line arguments에 하단의 내용을 적습니다.
+```
+-quit -batchmode -executeMethod Jenkins.Builder.Build_IOS -config_path YOUR_CONFIG_PATH.json -output_path ${WORKSPACE} -filename Build -ios_version 1
+```
+
+4. 2. Build에 Execute Shell 작업을 추가하고 하단의 내용을 적습니다.
+```
+# ipa Export
+sh "ios_export_ipa.sh이 들어있는 경로" "${WORKSPACE}" "AppleTeamID"
+``` 
+여기서 AppleTeamID는 애플 계정에 있는 애플 팀 ID를 기입합니다. 팀 ID는 숫자와 대문자 영어로 이루어진 10개의 단어입니다. (2020.08 기준)
+
