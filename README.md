@@ -78,10 +78,15 @@ Unity에서 packages를 인식 후 알아서 형식이 변경됩니다.
 
 IOS의 경우 ipa를 공유하려면 
 PC -> XCode Project -> ipa 추출 -> Appstore Connect 업로드까지 해아 하며,
-PC -> Xcode Project 과정에서  ipa -> Appstore Connect 업로드에 필요한 plist(property list) 등을 함께 Xcode Project에 담아야 합니다. 이것은 Config File로 작업할 수 있습니다.
+PC -> XCode Project 과정에서  ipa -> Appstore Connect 업로드에 필요한 plist(property list) 등을 함께 Xcode Project에 담아야 합니다. 이것은 Config File로 작업할 수 있습니다.
 
 젠킨스에 IOS Build 플러그인이 있음에도 불구하고 배치파일로 뺀 이유는 세팅 간소화 및 범용성을 위해서입니다.
 (플러그인에 세팅해야 할 변수가 많음, 젠킨스가 아닌 환경에서도 쓸 수 있게끔)
+
+**여기서 IOS 빌드 테스트 항목은 PC -> XCode Project -> ipa 추출 및 Appstore Connect 업로드까지 테스트합니다.**
+
+**Appstore Connect 링크**
+https://appstoreconnect.apple.com/
 
 ### 빌드 방법
 1. 젠킨스 프로젝트 생성 후 프로젝트 구성으로 갑니다.
