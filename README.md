@@ -95,7 +95,7 @@ rm -r ${WORKSPACE}/Build/
 -quit -batchmode -executeMethod Jenkins.Builder.Build_IOS -config_path YOUR_CONFIG_PATH.json -output_path ${WORKSPACE} -filename Build -ios_version 1
 ```
 
-4. 2. Build에 Execute Shell 작업을 추가하고 하단의 내용을 적습니다.
+4. Build에 Execute Shell 작업을 추가하고 하단의 내용을 적습니다.
 ```
 # ipa Export
 sh "ios_export_ipa.sh이 들어있는 경로" "${WORKSPACE}" "AppleTeamID"
