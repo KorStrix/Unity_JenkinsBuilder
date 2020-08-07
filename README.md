@@ -80,6 +80,9 @@ IOS의 경우 ipa를 공유하려면
 PC -> XCode Project -> ipa 추출 -> Appstore Connect 업로드까지 해아 하며,
 PC -> Xcode Project 과정에서  ipa -> Appstore Connect 업로드에 필요한 plist(property list) 등을 함께 Xcode Project에 담아야 합니다. 이것은 Config File로 작업할 수 있습니다.
 
+젠킨스에 IOS Build 플러그인이 있음에도 불구하고 배치파일로 뺀 이유는 세팅 간소화 및 범용성을 위해서입니다.
+(플러그인에 세팅해야 할 변수가 많음, 젠킨스가 아닌 환경에서도 쓸 수 있게끔)
+
 ### 빌드 방법
 1. 젠킨스 프로젝트 생성 후 프로젝트 구성으로 갑니다.
 2. Build에 Execute Shell 작업을 추가하고 하단의 내용을 적습니다.
@@ -99,3 +102,5 @@ sh "ios_export_ipa.sh이 들어있는 경로" "${WORKSPACE}" "AppleTeamID"
 ``` 
 여기서 AppleTeamID는 애플 계정에 있는 애플 팀 ID를 기입합니다. 팀 ID는 숫자와 대문자 영어로 이루어진 10개의 단어입니다. (2020.08 기준)
 
+5. Mac OS가 설치된 PC에서 XCode를 설치 후 Preference - AppleTeamID를 등록한 뒤 빌드를 합니다.
+6. **Build를 한 뒤 AppleStore Connect 사이트에 세팅한 빌드번호의 빌드가 있으면 성공**
