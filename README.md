@@ -5,7 +5,7 @@
 
 
 # 1. 설치 방법
-(링크)[https://github.com/KorStrix/Unity_DevelopmentDocs/blob/master/GitHub/UnityPackage.md]를 참고바랍니다.
+[링크](https://github.com/KorStrix/Unity_DevelopmentDocs/blob/master/GitHub/UnityPackage.md)를 참고바랍니다.
 
 ## 해당 프로젝트에 정상 설치되었는지 확인 방법
 **Unity Editor 상단탭/Tools/Build에 메뉴가 뜨면 성공!**
