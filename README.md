@@ -1,4 +1,4 @@
-# Unity_JenkinsBuilder
+# Unity Jenkins Builder
 젠킨스에서 실행하는 유니티 빌드 스크립트 에셋입니다.
 
 정확하게는 외부에서 커맨드라인을 통해 원하는 빌드를 뽑는 툴이며 편의상 **Jenkins Builder**로 칭합니다.
