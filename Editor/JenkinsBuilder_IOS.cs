@@ -201,7 +201,7 @@ namespace Jenkins
             // Apply settings
             File.WriteAllText(projectPath, pPBXProject.WriteToString());
 #else
-            Debug.Log($"{const_strPrefix_ForDebugLog} {nameof(Init_XCodeProject)} - Not Define Symbol is Not IOS");
+            Debug.Log($"{const_strPrefix_ForDebugLog} {nameof(Init_XCodeProject)} - Define Symbol is Not IOS");
 #endif       
         }
 
@@ -272,11 +272,6 @@ namespace Jenkins
                 else
                     arrRootValues.Add(pProperty.strKey, new PlistElementString(pProperty.strValue));
             }
-
-
-            if (arrRootValues.ContainsKey(strExitsOnSuspendKey) == false)
-                arrRootValues.Remove(strExitsOnSuspendKey);
-
 
             Debug.Log($"{const_strPrefix_ForDebugLog} pIOSSetting.arrHTTPAddress.Length : \"{pIOSSetting.arrHTTPAddress.Length}\"");
 

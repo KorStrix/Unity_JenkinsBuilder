@@ -74,17 +74,27 @@ namespace Jenkins
             /// </summary>
             output_path,
 
+            /// <summary>
+            /// PlayerSetting.android.BundleVersionCode
+            /// </summary>
             android_bundle_versioncode,
+
+            /// <summary>
+            /// PlayerSetting.android.Version
+            /// </summary>
+            android_version,
+
             ios_version,
         }
 
-        private static readonly Dictionary<ECommandLineList, string> const_mapCommandLine =
+        public static readonly Dictionary<ECommandLineList, string> const_mapCommandLine =
             new Dictionary<ECommandLineList, string>()
             {
                 {ECommandLineList.filename, "-filename"},
                 {ECommandLineList.config_path, "-config_path"},
                 {ECommandLineList.output_path, "-output_path"},
                 {ECommandLineList.android_bundle_versioncode, "-android_versioncode"},
+                {ECommandLineList.android_version, "-android_version"},
                 {ECommandLineList.ios_version, "-ios_version"}
             };
         
@@ -121,8 +131,8 @@ namespace Jenkins
             Exception pException = DoTryParsing_JsonFile(strPath, out pOutFile);
             if (pException != null)
             {
-                Debug.LogFormat(const_strPrefix_ForDebugLog + " Error - FilePath : {0}, FilePath : {1}\n" +
-                                " Error : {2}", strCommandLine, strPath, pException);
+                Debug.LogErrorFormat(const_strPrefix_ForDebugLog + " Error - FilePath : {0}, FilePath : {1}\n" +
+                                     " Error : {2}", strCommandLine, strPath, pException);
                 return false;
             }
 
@@ -136,7 +146,7 @@ namespace Jenkins
             Exception pException = DoTryParsing_JsonFile_SO(strPath, out pOutFile);
             if (pException != null)
             {
-                Debug.LogFormat(const_strPrefix_ForDebugLog + " Error - FilePath : {0}, FilePath : {1}\n" +
+                Debug.LogErrorFormat(const_strPrefix_ForDebugLog + " Error - FilePath : {0}, FilePath : {1}\n" +
                                 " Error : {2}", strCommandLine, strPath, pException);
                 return false;
             }
@@ -144,7 +154,28 @@ namespace Jenkins
             return true;
         }
 
-        
+        public static void GetAppFilePath_FromConfig(BuildConfig pConfig, out string strBuildOutputFolderPath,
+            out string strFileName)
+        {
+            string strBuildOutputFolderPath_CommandLine = GetCommandLineArg(const_mapCommandLine[ECommandLineList.output_path]);
+            string strFileName_CommandLine = GetCommandLineArg(const_mapCommandLine[ECommandLineList.filename]);
+
+            strBuildOutputFolderPath = string.IsNullOrEmpty(strBuildOutputFolderPath_CommandLine)
+                ? pConfig.strAbsolute_BuildOutputFolderPath
+                : strBuildOutputFolderPath_CommandLine;
+
+            if (string.IsNullOrEmpty(strFileName_CommandLine))
+            {
+                strFileName = pConfig.strFileName;
+            }
+            else
+            {
+                strFileName = strFileName_CommandLine;
+                pConfig.bUse_DateTime_Suffix = false;
+            }
+        }
+
+
         public static Exception DoTryParsing_JsonFile<T>(string strJsonFilePath, out T pOutFile)
             where T : new()
         {
@@ -195,13 +226,10 @@ namespace Jenkins
         {
             g_pLastConfig = pBuildConfig;
             
-            Process_PreBuild(pBuildConfig, strAbsolute_BuildOutputFolderPath, strFileName, eBuildTarget,
-                out var eBuildTargetGroup, out var strBuildPath);
+            Process_PreBuild(pBuildConfig, strAbsolute_BuildOutputFolderPath, strFileName, eBuildTarget, out var eBuildTargetGroup, out var strBuildPath);
 
-            BuildPlayerOptions sBuildPlayerOptions =
-                Generate_BuildPlayerOption(pBuildConfig, eBuildTarget, strBuildPath);
-            PlayerSetting_Backup pEditorSetting_Backup =
-                SettingBuildConfig_To_EditorSetting(pBuildConfig, eBuildTargetGroup);
+            BuildPlayerOptions sBuildPlayerOptions = Generate_BuildPlayerOption(pBuildConfig, eBuildTarget, strBuildPath);
+            PlayerSetting_Backup pEditorSetting_Backup = SettingBuildConfig_To_EditorSetting(pBuildConfig, eBuildTargetGroup);
 
             Debug.LogFormat(const_strPrefix_ForDebugLog + " Before Build DefineSymbol TargetGroup : {0}\n" +
                             "Origin Symbol : {1}\n " +
@@ -222,6 +250,7 @@ namespace Jenkins
             catch (Exception e)
             {
                 Debug.Log(const_strPrefix_ForDebugLog + " Error - " + e);
+                throw;
             }
 
             pEditorSetting_Backup.Back_To_Origin();
@@ -238,7 +267,7 @@ namespace Jenkins
         {
             if (GetFile_From_CommandLine_SO(const_mapCommandLine[ECommandLineList.config_path], out BuildConfig pConfig))
             {
-                GetPath_FromConfig(pConfig, out string strBuildOutputFolderPath, out string strFileName);
+                GetAppFilePath_FromConfig(pConfig, out string strBuildOutputFolderPath, out string strFileName);
                 DoBuild(pConfig, strBuildOutputFolderPath, strFileName, BuildTarget.Android);
             }
         }
@@ -250,7 +279,7 @@ namespace Jenkins
         {
             if (GetFile_From_CommandLine_SO(const_mapCommandLine[ECommandLineList.config_path], out BuildConfig pConfig))
             {
-                GetPath_FromConfig(pConfig, out string strBuildOutputFolderPath, out string strFileName);
+                GetAppFilePath_FromConfig(pConfig, out string strBuildOutputFolderPath, out string strFileName);
                 DoBuild(pConfig, strBuildOutputFolderPath, strFileName, BuildTarget.iOS);
             }
         }
@@ -275,27 +304,6 @@ namespace Jenkins
             return sBuildPlayerOptions;
         }
 
-
-        private static void GetPath_FromConfig(BuildConfig pConfig, out string strBuildOutputFolderPath,
-            out string strFileName)
-        {
-            string strBuildOutputFolderPath_CommandLine = GetCommandLineArg(const_mapCommandLine[ECommandLineList.output_path]);
-            string strFileName_CommandLine = GetCommandLineArg(const_mapCommandLine[ECommandLineList.filename]);
-
-            strBuildOutputFolderPath = string.IsNullOrEmpty(strBuildOutputFolderPath_CommandLine)
-                ? pConfig.strAbsolute_BuildOutputFolderPath
-                : strBuildOutputFolderPath_CommandLine;
-
-            if (string.IsNullOrEmpty(strFileName_CommandLine))
-            {
-                strFileName = pConfig.strFileName;
-            }
-            else
-            {
-                strFileName = strFileName_CommandLine;
-                pConfig.bUse_DateTime_Suffix = false;
-            }
-        }
 
         private static PlayerSetting_Backup SettingBuildConfig_To_EditorSetting(BuildConfig pBuildConfig,
             BuildTargetGroup eBuildTargetGroup)
@@ -348,8 +356,7 @@ namespace Jenkins
             string strBuildPath = strFolderName + "/" + strFileName;
             if (bUse_DateTime_Suffix)
             {
-                DateTime sDateTimeNow = DateTime.Now;
-                string strDateTime = sDateTimeNow.ToString("MMdd_hhmm");
+                string strDateTime = DateTime.Now.ToString("MMdd_HHmm");
                 strBuildPath = strBuildPath + "_" + strDateTime;
             }
 

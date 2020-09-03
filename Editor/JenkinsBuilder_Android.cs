@@ -48,6 +48,8 @@ namespace Jenkins
             public bool bUse_IL_TO_CPP_Build;
 
             public int iBundleVersionCode = PlayerSettings.Android.bundleVersionCode;
+
+            public string strVersion = PlayerSettings.bundleVersion;
         }
 
         public AndroidSetting pAndroidSetting = new AndroidSetting();
@@ -87,6 +89,12 @@ namespace Jenkins
                 PlayerSettings.Android.bundleVersionCode = iBundleVersionCode;
             else
                 PlayerSettings.Android.bundleVersionCode = pSetting.iBundleVersionCode;
+
+            string strVersionCode_FromCommandLine = GetCommandLineArg(const_mapCommandLine[ECommandLineList.android_version]);
+            if (string.IsNullOrEmpty(strVersionCode_FromCommandLine) == false)
+                PlayerSettings.bundleVersion = strVersionCode_FromCommandLine;
+            else
+                PlayerSettings.bundleVersion = pSetting.strVersion;
 
             // if (pAndroidSetting.bUse_IL_TO_CPP_Build)
             //     PlayerSettings.SetScriptingBackend(BuildTargetGroup.Android, ScriptingImplementation.IL2CPP);
