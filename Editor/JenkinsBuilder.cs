@@ -84,10 +84,18 @@ namespace Jenkins
             /// </summary>
             android_version,
 
+            /// <summary>
+            /// 스토어에 올라가는 빌드 번호
+            /// </summary>
+            ios_buildnumber,
+
+            /// <summary>
+            /// 스토어에 올라가는 버전
+            /// </summary>
             ios_version,
         }
 
-        public static readonly Dictionary<ECommandLineList, string> const_mapCommandLine =
+        static readonly IReadOnlyDictionary<ECommandLineList, string> mapCommandLine =
             new Dictionary<ECommandLineList, string>()
             {
                 {ECommandLineList.filename, "-filename"},
@@ -95,9 +103,12 @@ namespace Jenkins
                 {ECommandLineList.output_path, "-output_path"},
                 {ECommandLineList.android_bundle_versioncode, "-android_versioncode"},
                 {ECommandLineList.android_version, "-android_version"},
+                {ECommandLineList.ios_buildnumber, "-ios_buildnumber"},
                 {ECommandLineList.ios_version, "-ios_version"}
             };
-        
+
+        public static string GetCommandLineString(ECommandLineList eCommandLine) => mapCommandLine[eCommandLine];
+
         private static BuildConfig g_pLastConfig;
         
         #region public
@@ -157,8 +168,8 @@ namespace Jenkins
         public static void GetAppFilePath_FromConfig(BuildConfig pConfig, out string strBuildOutputFolderPath,
             out string strFileName)
         {
-            string strBuildOutputFolderPath_CommandLine = GetCommandLineArg(const_mapCommandLine[ECommandLineList.output_path]);
-            string strFileName_CommandLine = GetCommandLineArg(const_mapCommandLine[ECommandLineList.filename]);
+            string strBuildOutputFolderPath_CommandLine = GetCommandLineArg(mapCommandLine[ECommandLineList.output_path]);
+            string strFileName_CommandLine = GetCommandLineArg(mapCommandLine[ECommandLineList.filename]);
 
             strBuildOutputFolderPath = string.IsNullOrEmpty(strBuildOutputFolderPath_CommandLine)
                 ? pConfig.strAbsolute_BuildOutputFolderPath
@@ -265,7 +276,7 @@ namespace Jenkins
         /// </summary>
         public static void Build_Android()
         {
-            if (GetFile_From_CommandLine_SO(const_mapCommandLine[ECommandLineList.config_path], out BuildConfig pConfig))
+            if (GetFile_From_CommandLine_SO(mapCommandLine[ECommandLineList.config_path], out BuildConfig pConfig))
             {
                 GetAppFilePath_FromConfig(pConfig, out string strBuildOutputFolderPath, out string strFileName);
                 DoBuild(pConfig, strBuildOutputFolderPath, strFileName, BuildTarget.Android);
@@ -277,7 +288,7 @@ namespace Jenkins
         /// </summary>
         public static void Build_IOS()
         {
-            if (GetFile_From_CommandLine_SO(const_mapCommandLine[ECommandLineList.config_path], out BuildConfig pConfig))
+            if (GetFile_From_CommandLine_SO(mapCommandLine[ECommandLineList.config_path], out BuildConfig pConfig))
             {
                 GetAppFilePath_FromConfig(pConfig, out string strBuildOutputFolderPath, out string strFileName);
                 DoBuild(pConfig, strBuildOutputFolderPath, strFileName, BuildTarget.iOS);

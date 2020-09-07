@@ -84,13 +84,13 @@ namespace Jenkins
             PlayerSettings.Android.keystoreName = Application.dataPath + pSetting.strKeystore_RelativePath;
             PlayerSettings.Android.keystorePass = pSetting.strKeystore_Password;
 
-            string strBundleVersionCode_FromCommandLine = GetCommandLineArg(const_mapCommandLine[ECommandLineList.android_bundle_versioncode]);
+            string strBundleVersionCode_FromCommandLine = GetCommandLineArg(mapCommandLine[ECommandLineList.android_bundle_versioncode]);
             if(int.TryParse(strBundleVersionCode_FromCommandLine, out int iBundleVersionCode))
                 PlayerSettings.Android.bundleVersionCode = iBundleVersionCode;
             else
                 PlayerSettings.Android.bundleVersionCode = pSetting.iBundleVersionCode;
 
-            string strVersionCode_FromCommandLine = GetCommandLineArg(const_mapCommandLine[ECommandLineList.android_version]);
+            string strVersionCode_FromCommandLine = GetCommandLineArg(mapCommandLine[ECommandLineList.android_version]);
             if (string.IsNullOrEmpty(strVersionCode_FromCommandLine) == false)
                 PlayerSettings.bundleVersion = strVersionCode_FromCommandLine;
             else

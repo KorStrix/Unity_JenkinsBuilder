@@ -77,11 +77,13 @@ namespace Jenkins
 
             /// <summary>
             /// 출시할 빌드 버전
+            /// <para>이미 앱스토어에 올렸으면 그 다음 항상 숫자를 올려야 합니다. 안그럼 앱스토어에서 안받음</para>
             /// </summary>
             public string strBuildVersion;
 
             /// <summary>
-            /// 빌드 번호, 이미 앱스토어에 올렸으면 그 다음 항상 1씩 올려야 합니다. 안그럼 앱스토어에서 안받음
+            /// 빌드 번호
+            /// <para>이미 앱스토어에 올렸으면 그 다음 항상 1씩 올려야 합니다. 안그럼 앱스토어에서 안받음</para>
             /// </summary>
             public string strBuildNumber;
 
@@ -99,6 +101,7 @@ namespace Jenkins
             }
 
             public PLIST_ADD[] arrAddPlist = new PLIST_ADD[] {new PLIST_ADD("ExampleKey", "ExampleValue")};
+            public string[] arrRemovePlistKey = new string[] { "ExampleKey", "ExampleValue" };
         }
 
         public IOSSetting pIOSSetting = new IOSSetting();
@@ -273,6 +276,15 @@ namespace Jenkins
                     arrRootValues.Add(pProperty.strKey, new PlistElementString(pProperty.strValue));
             }
 
+            foreach (string strRemovePropertyKey in pIOSSetting.arrRemovePlistKey)
+            {
+                if (arrRootValues.ContainsKey(strRemovePropertyKey))
+                {
+                    arrRootValues.Remove(strRemovePropertyKey);
+                    Debug.Log($"{const_strPrefix_ForDebugLog} Contains & Removed Key.Length : {strRemovePropertyKey}");
+                }
+            }
+
             Debug.Log($"{const_strPrefix_ForDebugLog} pIOSSetting.arrHTTPAddress.Length : \"{pIOSSetting.arrHTTPAddress.Length}\"");
 
             // HTTP 주소는 Plist에 추가해야 접근 가능..
@@ -321,22 +333,26 @@ namespace Jenkins
             if (string.IsNullOrEmpty(pSetting.strBundle_Identifier) == false)
                 PlayerSettings.applicationIdentifier = pSetting.strBundle_Identifier;
 
-            if (string.IsNullOrEmpty(pSetting.strBuildVersion) == false)
+            string strVersion_FromCommandLine = GetCommandLineArg(mapCommandLine[ECommandLineList.ios_version]);
+            if (string.IsNullOrEmpty(strVersion_FromCommandLine) == false)
+                PlayerSettings.bundleVersion = strVersion_FromCommandLine;
+            else if(string.IsNullOrEmpty(pSetting.strBuildVersion) == false)
                 PlayerSettings.bundleVersion = pSetting.strBuildVersion;
 
 
-            string strVersion_FromCommandLine = GetCommandLineArg(const_mapCommandLine[ECommandLineList.ios_version]);
-            if(string.IsNullOrEmpty(strVersion_FromCommandLine) == false)
-                PlayerSettings.iOS.buildNumber = strVersion_FromCommandLine;
+            string strBuildNumber_FromCommandLine = GetCommandLineArg(mapCommandLine[ECommandLineList.ios_buildnumber]);
+            if(string.IsNullOrEmpty(strBuildNumber_FromCommandLine) == false)
+                PlayerSettings.iOS.buildNumber = strBuildNumber_FromCommandLine;
             else if(string.IsNullOrEmpty(pSetting.strBuildNumber) == false)
                 PlayerSettings.iOS.buildNumber = pSetting.strBuildNumber;
 
 
-            Debug.LogFormat(const_strPrefix_ForDebugLog + " Build Setting [IOS]\n" +
-                            "strPackageName : {0}\n" +
-                            "strBuildNumber : {1}",
-                PlayerSettings.applicationIdentifier, PlayerSettings.iOS.buildNumber
-            );
+            Debug.Log(const_strPrefix_ForDebugLog +
+                      $" Build Setting [IOS]\n" +
+                      $"applicationIdentifier : {PlayerSettings.applicationIdentifier}\n" +
+                      $"PlayerSettings.bundleVersion : {PlayerSettings.bundleVersion}\n" +
+                      $"buildNumber : {PlayerSettings.iOS.buildNumber}"
+                      );
         }
 
     }
