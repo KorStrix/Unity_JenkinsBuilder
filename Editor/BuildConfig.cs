@@ -45,9 +45,10 @@ namespace Jenkins
 		public string strAppVersion;
 
 
-		// 출력할 폴더 및 파일은 Jenkins에서 처리할 예정
-		[Obsolete("Jenkins에서 CommandLine으로 처리할 예정")]
-		public string strAbsolute_BuildOutputFolderPath;
+        // 출력할 폴더 및 파일은 Jenkins에서 처리할 예정이였으나,
+        // IL2CPP의 경우 같은 장소에 빌드해놓으면 더 빠르다는 메뉴얼로 인해 일단 보류
+        // https://docs.unity3d.com/kr/2020.2/Manual/IL2CPP-OptimizingBuildTimes.html
+        public string strAbsolute_BuildOutputFolderPath;
 
 		[Obsolete("Jenkins에서 CommandLine으로 처리할 예정")]
 		public bool bUse_DateTime_Suffix;
