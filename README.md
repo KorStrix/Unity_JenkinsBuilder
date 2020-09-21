@@ -41,7 +41,7 @@
 -executeMethod Jenkins.Builder.Build_Android -config_path YOUR_CONFIG_PATH.json -output_path ${JENKINS_HOME}/jobs/${JOB_NAME}/builds/${BUILD_NUMBER}/archive
 ```
 여기서 YOUR_CONFIG_PATH에 Build Config 파일의 경로를 세팅합니다.
-다른 커맨드 라인을 보고싶으시면 스크립트[(링크)](https://github.com/KorStrix/Unity_JenkinsBuilder/blob/master/Editor/JenkinsBuilder.cs)를 참고바랍니다.
+다른 커맨드 라인을 보고싶으시면 스크립트[(링크)](https://github.com/KorStrix/Unity_JenkinsBuilder/blob/eb5f4c29fe026abfbbdf7977ca4295948cfb8106/Editor/JenkinsBuilder.cs#L60)를 참고바랍니다.
 
 - ${JENKINS_HOME}, ${JOB_NAME}, ${BUILD_NUMBER}의 경우 Jenkins 환경변수입니다.
 
