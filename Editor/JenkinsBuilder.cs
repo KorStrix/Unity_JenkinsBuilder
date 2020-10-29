@@ -269,6 +269,12 @@ namespace Jenkins
 
             Debug.LogFormat(const_strPrefix_ForDebugLog + " After Build DefineSymbol Current {0}",
                 PlayerSettings.GetScriptingDefineSymbolsForGroup(eBuildTargetGroup));
+
+            // 2018.4 에서 프로젝트 전체 리임포팅 하는 이슈 대응
+            // https://issuetracker.unity3d.com/issues/osx-batchmode-build-hangs-at-refresh-detecting-if-any-assets-need-to-be-imported-or-removed
+#if UNITY_EDITOR
+            AssetDatabase.Refresh();
+#endif
         }
         
         /// <summary>

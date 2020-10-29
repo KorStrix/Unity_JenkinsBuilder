@@ -13,23 +13,23 @@ EDIT_NAME=$2
 METHOD_NAME=$3
 ZERO_PADDING_COUNT=$4
 
-echo "Current File : $(cat "$FILE_NAME") METHOD_NAME : $METHOD_NAME"
-
 # JJ 플러그인을 통해 변수 추출
 VERSION=$(cat "$FILE_NAME" | jj "$EDIT_NAME")
 
-if [ "$METHOD_NAME" == "GET" ]
+if [ "$METHOD_NAME" == "GET" ] || [ "$METHOD_NAME" == "get" ]
 then
 	echo $VERSION
 	
 else
 	NEW_VERSION=$VERSION;
 
-	if [ "$METHOD_NAME" == "ADD" ]
+	echo "Current File : $(cat "$FILE_NAME") METHOD_NAME : $METHOD_NAME \nNEW_VERSION : $NEW_VERSION" 
+
+	if [ "$METHOD_NAME" == "ADD" ] || [ "$METHOD_NAME" == "add" ]
 	then
 		# 변수에 1을 더합니다.
 		NEW_VERSION=$((${VERSION} + 1))
-	elif [ "$METHOD_NAME" == "SUB" ]
+	elif [ "$METHOD_NAME" == "SUB" ] || [ "$METHOD_NAME" == "sub" ]
 	then
 		# 변수에 1을 더합니다.
 		NEW_VERSION=$((${VERSION} - 1))
@@ -38,7 +38,8 @@ else
 	if [ "$ZERO_PADDING_COUNT" != "0" ]
 	then
 		OPERATOR="%0${ZERO_PADDING_COUNT}d"
-		NEW_VERSION=$(printf "$OPERATOR" $NEW_VERSION)
+		NEW_VERSION=$(printf \""$OPERATOR\"" $NEW_VERSION)
+		
 		echo "Zero Fill $ADD_PREFIX // $NEW_VERSION"
 	fi
 
@@ -46,7 +47,7 @@ else
 
 	# 1을 더한 값을 변수에 저장후 덮어쓰기
 	# -v = 덮어쓰기 / -p = 보기좋은 출력
-	FILE_TEXT=$(cat "$FILE_NAME" | jj -v "$NEW_VERSION" "$EDIT_NAME" | jj -p)
+	FILE_TEXT=$(cat "$FILE_NAME" | jj -r -v "$NEW_VERSION" "$EDIT_NAME" | jj -p)
 		
 	# 변수를 파일에 덮어쓰며 확인합니다.
 	echo "$FILE_TEXT" > "$FILE_NAME"
