@@ -64,6 +64,14 @@ namespace Jenkins
                                     "4. 빌드가 되는지 확인 후, 빌드가 완료되면 Open BuildFolder를 눌러 빌드 파일을 확인합니다."
                 ,MessageType.Info);
 
+
+            if (GUILayout.Button("Github"))
+            {
+                System.Diagnostics.Process.Start("https://github.com/KorStrix/Unity_JenkinsBuilder");
+            }
+            GUILayout.Space(30f);
+
+
             EditorGUI.BeginChangeCheck();
             DrawPath_File("Config Json File", ref _strConfigPath, 
                 (strPath) => EditorPrefs.SetString($"{nameof(JenkinsBuilderWindow)}_{nameof(_strConfigPath)}", strPath));
@@ -98,8 +106,6 @@ namespace Jenkins
             {
                 System.Diagnostics.Process.Start(_strBuildPath);
             }
-
-            GUILayout.Space(30f);
         }
 
         private string DrawPath_Folder(string strExplainName, ref string strFolderPath, Action<string> OnChangePath)
