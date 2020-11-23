@@ -4,7 +4,7 @@
 젠킨스에서 실행하는 유니티 빌드 스크립트 패키지입니다.
 
 기능
-- Unity Editor 내부/외부(커맨드라인)에서 ConfigFile을 통해 Platform별로 빌드
+- Unity Editor 내부/외부(커맨드라인)에서 `ConfigFile`을 통해 Platform별로 빌드
 
 # 2. 왜 만들었나요?
 커맨드라인을 통해 Unity Build를 할경우 이것저것 세팅할게 많습니다.
@@ -39,7 +39,12 @@
 ---
 ## 4-2. 젠킨스 - 안드로이드 빌드 테스트
 
+![](https://github.com/KorStrix/Unity_JenkinsBuilder/blob/master/GithubImage/Jenkins_BuildConfig_Android.png)
+빌드하기 전 `BuildConfig/AndroidSetting`을 세팅하세요
+
 안드로이드는 크게 어렵지 않기 때문에 자세한 설명을 생략합니다.
+
+
 
 ### 빌드 방법
 
