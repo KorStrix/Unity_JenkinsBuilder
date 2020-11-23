@@ -27,12 +27,12 @@ else
 
 	if [ "$METHOD_NAME" == "ADD" ] || [ "$METHOD_NAME" == "add" ]
 	then
-		# 변수에 1을 더합니다.
-		NEW_VERSION=$((${VERSION} + 1))
+		# 변수에 1을 더합니다. `10#`을 안붙일 경우 에러가 뜹니다. (shell은 기본적으로 8진수 계산이므로 9 이상 숫자가 나올 시 에러)
+		NEW_VERSION=$((10#${VERSION} + 1))
 	elif [ "$METHOD_NAME" == "SUB" ] || [ "$METHOD_NAME" == "sub" ]
 	then
 		# 변수에 1을 더합니다.
-		NEW_VERSION=$((${VERSION} - 1))
+		NEW_VERSION=$((10#${VERSION} - 1))
 	fi
 
 	if [ "$ZERO_PADDING_COUNT" != "0" ]
