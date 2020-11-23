@@ -1,4 +1,5 @@
 # 1. 젠킨스 빌더 프로젝트입니다.
+![](https://github.com/KorStrix/Unity_JenkinsBuilder/blob/master/GithubImage/Jenkins_EditorWindow.png)
 젠킨스에서 실행하는 유니티 빌드 스크립트 패키지입니다.
 
 기능
