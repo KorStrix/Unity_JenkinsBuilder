@@ -12,6 +12,7 @@
 이 세팅 파일을 Config파일 하나에 담은 후 Config 경로만 넘겨주는 식으로 빌드하기 위해서 만들었습니다.
 
 ![](https://github.com/KorStrix/Unity_JenkinsBuilder/blob/master/GithubImage/Jenkins_BuildConfig.png)
+
 (Config 파일 [링크](https://github.com/KorStrix/Unity_JenkinsBuilder/blob/master/Editor/BuildConfig.cs))
 
 
