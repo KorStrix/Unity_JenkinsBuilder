@@ -1,15 +1,15 @@
 # 1. 젠킨스 빌더 프로젝트입니다.
 ![](https://github.com/KorStrix/Unity_JenkinsBuilder/blob/master/GithubImage/Jenkins_EditorWindow.png)
 
-젠킨스에서 실행하는 유니티 빌드 스크립트 패키지입니다.
+`젠킨스`에서 실행하는 유니티 빌드 스크립트 패키지입니다.
 
 기능
-- Unity Editor 내부/외부(커맨드라인)에서 `ConfigFile`을 통해 Platform별로 빌드
+- Unity Editor 내부/외부(`커맨드라인`)에서 `ConfigFile`을 통해 `Platform`별로 `빌드`
 
 # 2. 왜 만들었나요?
-커맨드라인을 통해 Unity Build를 할경우 이것저것 세팅할게 많습니다.
+`커맨드라인`을 통해 `Unity Build`를 할경우 이것저것 `세팅`할게 많습니다.
 
-이 세팅들을 파일(=**Config File**)에 담은 후 경로만 넘겨주는 식으로 빌드하기 위해서 만들었습니다.
+이 세팅들을 `파일`(=**Config File**)에 담은 후 `경로`만 넘겨주는 식으로 빌드하기 위해서 만들었습니다.
 
 ![](https://github.com/KorStrix/Unity_JenkinsBuilder/blob/master/GithubImage/Jenkins_BuildConfig.png)
 
@@ -25,14 +25,14 @@
 # 4. 빌드 테스트
 
 ## 4-1. Build Config 생성 및 Editor에서 바로 빌드 테스트
-1. 유니티 에디터의 상단 탭 - Tools/Strix/Jenkins Build/Create Build Config Exmaple File을 생성합니다.
-2. Build Config는 Json 형식으로 이루어져 있으며, 각 항목당 설명은 스크립트에 주석[(링크)](https://github.com/KorStrix/Unity_JenkinsBuilder/blob/master/Editor/BuildConfig.cs)으로 달았습니다.
-이를 참고하며 Build Config 파일을 프로젝트에 맞게 수정합니다.
-3. 수정 완료 후 Tools/Build/Show Jenkins Builder Window를 통해 윈도우를 엽니다.
-4. 아까 작성한 Config File Path를 설정 후 빌드 파일을 어디에 생성할지 세팅합니다.
-5. Android or IOS Build를 합니다.
-* 빌드 하기 전 주의사항 ) 프로젝트의 Platform이 해당 플랫폼인지 확인합니다.
-* AOS는 APK를 바로 빌드할 수 있지만, IOS의 경우 유니티에선 Xcode Project로 Export밖에 못합니다.
+1. 유니티 에디터의 상단 탭 - `Tools/Strix/Jenkins Build/Create Build Config Exmaple File`로 `ConfigFile`을 생성합니다.
+2. `Config File`은 `Json 형식`으로 이루어져 있으며, 각 항목당 설명은 스크립트에 주석[(링크)](https://github.com/KorStrix/Unity_JenkinsBuilder/blob/master/Editor/BuildConfig.cs)으로 달았습니다.
+이를 참고하며 `Config File`을 프로젝트에 맞게 수정합니다.
+3. 수정 완료 후 `Tools/Strix/Jenkins Build/Show Jenkins Builder Window`를 통해 윈도우를 엽니다.
+4. 아까 작성한 `Config File Path`를 설정 후 빌드 파일을 어디에 생성할지 세팅합니다.
+5. Android or IOS `Build`를 합니다.
+* 빌드 하기 전 주의사항 ) 프로젝트의 `Platform`이 해당 Platform인지 확인합니다.
+* `AOS`는 APK를 `바로 빌드`할 수 있지만, `IOS`의 경우 유니티에선 `Xcode Project`로 Export밖에 못합니다.
 
 6. **APK or XCode Project가 세팅한 Output path에 나오면 성공!**
 
