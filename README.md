@@ -40,6 +40,7 @@
 ## 4-2. 젠킨스 - 안드로이드 빌드 테스트
 
 ![](https://github.com/KorStrix/Unity_JenkinsBuilder/blob/master/GithubImage/Jenkins_BuildConfig_Android.png)
+
 빌드하기 전 `BuildConfig/AndroidSetting`을 세팅하세요.
 
 안드로이드는 크게 어렵지 않기 때문에 자세한 설명을 생략합니다.
@@ -69,6 +70,7 @@
 ## 4-3. 젠킨스 - IOS 빌드 테스트
 
 ![](https://github.com/KorStrix/Unity_JenkinsBuilder/blob/master/GithubImage/Jenkins_BuildConfig_iOS.png)
+
 빌드하기 전 `BuildConfig/iOSSetting`을 세팅하세요.
 
 ### 주의사항
