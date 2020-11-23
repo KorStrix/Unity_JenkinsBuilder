@@ -1,19 +1,27 @@
-# Unity Jenkins Builder
-젠킨스에서 실행하는 유니티 빌드 스크립트 에셋입니다.
+# 1. 젠킨스 빌더 프로젝트입니다.
+젠킨스에서 실행하는 유니티 빌드 스크립트 패키지입니다.
 
-정확하게는 외부에서 커맨드라인을 통해 원하는 빌드를 뽑는 툴이며 편의상 **Jenkins Builder**로 칭합니다.
+기능
+- Unity Editor 내부/외부(커맨드라인)에서 ConfigFile을 통해 Platform별로 빌드
+
+# 2. 왜 만들었나요?
+커맨드라인을 통해 Unity Build를 할경우 이것저것 세팅할게 많습니다.
+이 세팅 파일을 Config파일 하나에 담은 후 Config 경로만 넘겨주는 식으로 빌드하기 위해서 만들었습니다.
+
++ 커맨드라인 뿐만아니라 UnityEditor에서 상단 탭에 `Tools/Strix/Jenkins Build/Show Builder Window` 를 통해 Config파일로 빌드를 할 수 있습니다.
+Config 파일 [링크](https://github.com/KorStrix/Unity_JenkinsBuilder/blob/master/Editor/BuildConfig.cs)
 
 
-# 1. 설치 방법
+# 3. 어떻게 설치하나요?
 [링크](https://github.com/KorStrix/Unity_DevelopmentDocs/blob/master/GitHub/UnityPackage.md)를 참고바랍니다.
 
 **Unity Editor 상단탭/Tools/Build에 메뉴가 뜨면 설치 성공!**
 
 ---
-# 2. 빌드 테스트
+# 4. 빌드 테스트
 
-## 2-1. Build Config 생성 및 Editor에서 바로 빌드 테스트
-1. 유니티 에디터의 상단 탭 - Tools/Build/Create Build Config Exmaple File을 생성합니다.
+## 4-1. Build Config 생성 및 Editor에서 바로 빌드 테스트
+1. 유니티 에디터의 상단 탭 - Tools/Strix/Jenkins Build/Create Build Config Exmaple File을 생성합니다.
 2. Build Config는 Json 형식으로 이루어져 있으며, 각 항목당 설명은 스크립트에 주석[(링크)](https://github.com/KorStrix/Unity_JenkinsBuilder/blob/master/Editor/BuildConfig.cs)으로 달았습니다.
 이를 참고하며 Build Config 파일을 프로젝트에 맞게 수정합니다.
 3. 수정 완료 후 Tools/Build/Show Jenkins Builder Window를 통해 윈도우를 엽니다.
@@ -25,7 +33,7 @@
 6. **APK or XCode Project가 세팅한 Output path에 나오면 성공!**
 
 ---
-## 2-2. 젠킨스 - 안드로이드 빌드 테스트
+## 4-2. 젠킨스 - 안드로이드 빌드 테스트
 
 안드로이드는 크게 어렵지 않기 때문에 자세한 설명을 생략합니다.
 
@@ -49,7 +57,7 @@
 3. **Build를 한 뒤 Archive에 APK파일이 있으면 성공!**
 
 ---
-## 2-3. 젠킨스 - IOS 빌드 테스트
+## 4-3. 젠킨스 - IOS 빌드 테스트
 
 ### 주의사항
 **IOS 빌드를 위해선 MAC OS의 PC와 Apple 개발자 계정이 필요합니다.**
