@@ -13,26 +13,26 @@ using UnityEditor;
 
 namespace Jenkins
 {
-	[Serializable]
-	public partial class BuildConfig : ScriptableObject
-	{
-		/// <summary>
-		/// 출력할 파일 명, 젠킨스에서 -filename (filename:string) 로 설정가능
-		/// </summary>
-		public string strFileName = "Build";
+    [Serializable]
+    public partial class BuildConfig : ScriptableObject
+    {
+        /// <summary>
+        /// 출력할 파일 명, 젠킨스에서 -filename (filename:string) 로 설정가능
+        /// </summary>
+        public string strFileName = "Build";
 
-		public string strDefineSymbol;
+        public string strDefineSymbol;
 
-		/// <summary>
-		/// 설치한 디바이스에 표기될 이름
-		/// </summary>
-		public string strProductName;
+        /// <summary>
+        /// 설치한 디바이스에 표기될 이름
+        /// </summary>
+        public string strProductName;
 
         /// <summary>
         /// 빌드에 포함할 씬들, 확장자는 안쓰셔도 됩니다.
         /// <para>예시) ["Assets/SomethingScene_1", "Assets/SomethingScene_1"]</para>
         /// </summary>
-        public string[] arrBuildSceneNames; 
+        public string[] arrBuildSceneNames;
 
 
         // 출력할 폴더 및 파일은 Jenkins에서 처리할 예정이였으나,
@@ -40,10 +40,10 @@ namespace Jenkins
         // https://docs.unity3d.com/kr/2020.2/Manual/IL2CPP-OptimizingBuildTimes.html
         public string strAbsolute_BuildOutputFolderPath;
 
-		/// <summary>
-		/// 빌드파일 끝에 DateTime을 붙일지
-		/// </summary>
-		public bool bUse_DateTime_Suffix;
+        /// <summary>
+        /// 빌드파일 끝에 DateTime을 붙일지
+        /// </summary>
+        public bool bUse_DateTime_Suffix;
 
         /// <summary>
         /// <see>
@@ -67,5 +67,5 @@ namespace Jenkins
 
             return pConfig;
         }
-	}
+    }
 }

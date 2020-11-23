@@ -35,7 +35,7 @@ namespace Jenkins
         string _strConfigPath;
         string _strBuildPath;
         
-        [MenuItem(Builder.const_strPrefix_EditorContextMenu + "Show Jenkins Builder Window", priority = -10000)]
+        [MenuItem(Builder.const_strPrefix_EditorContextMenu + "Show Builder Window", priority = -10000)]
         public static void DoShow_Jenkins_Builder_Window()
         {
             JenkinsBuilderWindow pWindow = (JenkinsBuilderWindow) GetWindow(typeof(JenkinsBuilderWindow), false);
