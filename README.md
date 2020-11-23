@@ -1,5 +1,6 @@
 # 1. 젠킨스 빌더 프로젝트입니다.
 ![](https://github.com/KorStrix/Unity_JenkinsBuilder/blob/master/GithubImage/Jenkins_EditorWindow.png)
+
 젠킨스에서 실행하는 유니티 빌드 스크립트 패키지입니다.
 
 기능
@@ -23,6 +24,7 @@ Config 파일 [링크](https://github.com/KorStrix/Unity_JenkinsBuilder/blob/mas
 
 ## 4-1. Build Config 생성 및 Editor에서 바로 빌드 테스트
 1. 유니티 에디터의 상단 탭 - Tools/Strix/Jenkins Build/Create Build Config Exmaple File을 생성합니다.
+![](https://github.com/KorStrix/Unity_JenkinsBuilder/blob/master/GithubImage/Jenkins_BuildConfig.png)
 2. Build Config는 Json 형식으로 이루어져 있으며, 각 항목당 설명은 스크립트에 주석[(링크)](https://github.com/KorStrix/Unity_JenkinsBuilder/blob/master/Editor/BuildConfig.cs)으로 달았습니다.
 이를 참고하며 Build Config 파일을 프로젝트에 맞게 수정합니다.
 3. 수정 완료 후 Tools/Build/Show Jenkins Builder Window를 통해 윈도우를 엽니다.
