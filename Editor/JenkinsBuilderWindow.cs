@@ -33,62 +33,70 @@ namespace Jenkins
         BuildConfig _pBuildConfig;
 
         string _strConfigPath;
-        string _strBuildOutputPath;
-
-        [MenuItem("Tools/Build/Show Jenkins Builder Window", priority = -10000)]
+        string _strBuildPath;
+        
+        [MenuItem(Builder.const_strPrefix_EditorContextMenu + "Show Jenkins Builder Window", priority = -10000)]
         public static void DoShow_Jenkins_Builder_Window()
         {
-            // Get existing open window or if none, make a new one:
             JenkinsBuilderWindow pWindow = (JenkinsBuilderWindow) GetWindow(typeof(JenkinsBuilderWindow), false);
 
-            pWindow.minSize = new Vector2(400, 300);
+            pWindow.minSize = new Vector2(600, 200);
             pWindow.Show();
         }
 
         private void OnEnable()
         {
-            _strConfigPath = PlayerPrefs.GetString($"{nameof(JenkinsBuilderWindow)}_{nameof(_strConfigPath)}");
-            CheckConfigPath();
+            _strConfigPath = EditorPrefs.GetString($"{nameof(JenkinsBuilderWindow)}_{nameof(_strConfigPath)}");
+            _strBuildPath = EditorPrefs.GetString($"{nameof(JenkinsBuilderWindow)}_{nameof(_strBuildPath)}");
 
-            _strBuildOutputPath = PlayerPrefs.GetString($"{nameof(JenkinsBuilderWindow)}_{nameof(_strBuildOutputPath)}");
+            CheckConfigPath();
         }
 
         private void OnGUI()
         {
             GUILayout.Space(10f);
 
+            EditorGUILayout.HelpBox("이 툴은 BuildConfig를 통해 빌드하는 툴입니다.\n\n" +
+                                    "사용방법\n" +
+                                    "1. Edit Config Json File을 클릭하여 세팅합니다.\n" +
+                                    "2. Edit Build Output Path를 눌러 빌드파일 출력 경로를 세팅합니다.\n" +
+                                    "3. 플랫폼(Android or iOS) 빌드를 누릅니다.\n" +
+                                    "4. 빌드가 되는지 확인 후, 빌드가 완료되면 Open BuildFolder를 눌러 빌드 파일을 확인합니다."
+                ,MessageType.Info);
+
             EditorGUI.BeginChangeCheck();
-            DrawPath_File("Config", ref _strConfigPath, 
-                (strPath) => PlayerPrefs.SetString($"{nameof(JenkinsBuilderWindow)}_{nameof(_strConfigPath)}", strPath));
+            DrawPath_File("Config Json File", ref _strConfigPath, 
+                (strPath) => EditorPrefs.SetString($"{nameof(JenkinsBuilderWindow)}_{nameof(_strConfigPath)}", strPath));
             if (EditorGUI.EndChangeCheck())
             {
                 CheckConfigPath();
             }
 
-            DrawPath_Folder("Build Output", ref _strBuildOutputPath,
-                (strPath) => PlayerPrefs.SetString($"{nameof(JenkinsBuilderWindow)}_{nameof(_strBuildOutputPath)}", strPath));
+            DrawPath_Folder("Build", ref _strBuildPath,
+                (strPath) => EditorPrefs.SetString($"{nameof(JenkinsBuilderWindow)}_{nameof(_strBuildPath)}", strPath));
             GUILayout.Space(10f);
 
             bool bConfigIsNotNull = _pBuildConfig != null;
-            GUI.enabled = bConfigIsNotNull;
 
+            GUI.enabled = bConfigIsNotNull;
             GUILayout.BeginHorizontal();
             {
-                if (GUILayout.Button("Android Build !") && bConfigIsNotNull)
+                if (GUILayout.Button("Android Build !", GUILayout.Height(40f)))
                 {
-                    Builder.DoBuild(_pBuildConfig, _strBuildOutputPath, _pBuildConfig.strFileName, BuildTarget.Android);
+                    Builder.DoBuild(_pBuildConfig, _strBuildPath, _pBuildConfig.strFileName, BuildTarget.Android);
                 }
 
-                if (GUILayout.Button("IOS Build !") && bConfigIsNotNull)
+                if (GUILayout.Button("iOS Build !", GUILayout.Height(40f)))
                 {
-                    Builder.DoBuild(_pBuildConfig, _strBuildOutputPath, _pBuildConfig.strFileName, BuildTarget.iOS);
+                    Builder.DoBuild(_pBuildConfig, _strBuildPath, _pBuildConfig.strFileName, BuildTarget.iOS);
                 }
             }
             GUILayout.EndHorizontal();
+            GUI.enabled = true;
 
             if (GUILayout.Button("Open BuildFolder Path !"))
             {
-                System.Diagnostics.Process.Start(_strBuildOutputPath);
+                System.Diagnostics.Process.Start(_strBuildPath);
             }
 
             GUILayout.Space(30f);
@@ -109,11 +117,13 @@ namespace Jenkins
             GUILayout.BeginHorizontal();
 
             if (bIsFolder)
-                GUILayout.Label($"{strExplainName} Folder Path : ", GUILayout.Width(150f));
+                GUILayout.Label($"{strExplainName} Path : ", GUILayout.Width(150f));
             else
-                GUILayout.Label($"{strExplainName} File Path : ", GUILayout.Width(150f));
+                GUILayout.Label($"{strExplainName} Path : ", GUILayout.Width(150f));
 
-            GUILayout.Label(strEditPath);
+            GUI.enabled = false;
+            GUILayout.TextArea(strEditPath, GUILayout.ExpandWidth(true), GUILayout.Height(40f));
+            GUI.enabled = true;
 
             if (GUILayout.Button($"Edit {strExplainName}", GUILayout.Width(150f)))
             {
@@ -134,6 +144,9 @@ namespace Jenkins
 
         private void CheckConfigPath()
         {
+            if (string.IsNullOrEmpty(_strConfigPath))
+                return;
+
             Exception pException = Builder.DoTryParsing_JsonFile_SO(_strConfigPath, out _pBuildConfig);
             if (pException != null)
             {

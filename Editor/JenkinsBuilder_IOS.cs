@@ -41,7 +41,9 @@ namespace Jenkins
         [Serializable]
         public class IOSSetting
         {
-            // 애플 개발자 사이트에서 조회 가능, 숫자랑 영어로 된거
+            /// <summary>
+            /// 애플 개발자 사이트에서 조회 가능, 숫자랑 영어로 된거
+            /// </summary>
             public string strAppleTeamID;
 
             /// <summary>
@@ -102,16 +104,27 @@ namespace Jenkins
 
             public PLIST_ADD[] arrAddPlist = new PLIST_ADD[] {new PLIST_ADD("ExampleKey", "ExampleValue")};
             public string[] arrRemovePlistKey = new string[] { "ExampleKey", "ExampleValue" };
+
+            /// <summary>
+            /// <para>ScriptableObject 생성시 생성자에 PlayerSettings에서 Get할경우 Unity Exception이 남</para>
+            /// </summary>
+            /// <returns></returns>
+            public static IOSSetting CreateSetting()
+            {
+                IOSSetting pNewSetting = new IOSSetting();
+
+                return pNewSetting;
+            }
         }
 
-        public IOSSetting pIOSSetting = new IOSSetting();
+        public IOSSetting pIOSSetting;
     }
     
     public partial class Builder
     {
         public const int const_iPostBuildCallbackOrder = 777;
 
-        [MenuItem("Tools/Build/Build Test - IOS")]
+        [MenuItem(const_strPrefix_EditorContextMenu + "Build Test - IOS")]
         // ReSharper disable once UnusedMember.Global
         public static void Build_Test_IOS()
         {

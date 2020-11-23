@@ -27,8 +27,10 @@ namespace Jenkins
         [Serializable]
         public class AndroidSetting
         {
-            // 예시) com.CompanyName.ProductName 
-            public string strFullPackageName = PlayerSettings.applicationIdentifier;
+             /// <summary>
+             /// 예시) com.CompanyName.ProductName  
+             /// </summary>
+            public string strFullPackageName;
 
             public string strKeyalias_Name;
             public string strKeyalias_Password;
@@ -47,20 +49,36 @@ namespace Jenkins
             /// </summary>
             public bool bUse_IL_TO_CPP_Build;
 
-            public int iBundleVersionCode = PlayerSettings.Android.bundleVersionCode;
+            public int iBundleVersionCode;
 
-            public string strVersion = PlayerSettings.bundleVersion;
+            public string strVersion;
+
+
+            /// <summary>
+            /// <para>ScriptableObject 생성시 생성자에 PlayerSettings에서 Get할경우 Unity Exception이 남</para>
+            /// </summary>
+            /// <returns></returns>
+            public static AndroidSetting CreateSetting()
+            {
+                AndroidSetting pNewSetting = new AndroidSetting();
+
+                pNewSetting.strFullPackageName = PlayerSettings.applicationIdentifier;
+                pNewSetting.iBundleVersionCode = PlayerSettings.Android.bundleVersionCode;
+                pNewSetting.strVersion = PlayerSettings.bundleVersion;
+
+                return pNewSetting;
+            }
         }
 
-        public AndroidSetting pAndroidSetting = new AndroidSetting();
+        public AndroidSetting pAndroidSetting;
     }
     
     public partial class Builder
     {
-        [MenuItem("Tools/Build/Build Test - Android")]
+        [MenuItem(const_strPrefix_EditorContextMenu + "Build Test - Android")]
         public static void Build_Test_Android()
         {
-            BuildConfig pConfig = new BuildConfig();
+            BuildConfig pConfig = BuildConfig.CreateConfig();
             BuildTargetGroup eBuildTargetGroup = GetBuildTargetGroup(BuildTarget.Android);
             pConfig.strDefineSymbol = PlayerSettings.GetScriptingDefineSymbolsForGroup(eBuildTargetGroup);
 

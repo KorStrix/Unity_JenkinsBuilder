@@ -9,8 +9,6 @@
 
 using System;
 using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEditor;
 
 namespace Jenkins
@@ -37,29 +35,37 @@ namespace Jenkins
         public string[] arrBuildSceneNames; 
 
 
-
-		/// <summary>
-		/// 빌드 타겟이 IOS일 때는 Player Setting - IOS - Version
-		/// 빌드 타겟이 안드로이드일 때는 Player Setting - Android - BundleVersionCode
-		/// </summary>
-		public string strAppVersion;
-
-
         // 출력할 폴더 및 파일은 Jenkins에서 처리할 예정이였으나,
         // IL2CPP의 경우 같은 장소에 빌드해놓으면 더 빠르다는 메뉴얼로 인해 일단 보류
         // https://docs.unity3d.com/kr/2020.2/Manual/IL2CPP-OptimizingBuildTimes.html
         public string strAbsolute_BuildOutputFolderPath;
 
-		[Obsolete("Jenkins에서 CommandLine으로 처리할 예정")]
+		/// <summary>
+		/// 빌드파일 끝에 DateTime을 붙일지
+		/// </summary>
 		public bool bUse_DateTime_Suffix;
 
-		public void DoInit()
-		{
-			strProductName = PlayerSettings.productName;
-			arrBuildSceneNames = Builder.GetEnabled_EditorScenes();
-			
-			strAbsolute_BuildOutputFolderPath = Application.dataPath.Replace("/Assets", "") + "/Build";
-			bUse_DateTime_Suffix = true;
-		}
+        /// <summary>
+        /// <see>
+        ///     <cref>ScriptableObject.CreateInstance</cref>
+        /// </see>
+        ///     Wrapper
+        /// <para>ScriptableObject 생성시 생성자에 PlayerSettings에서 Get할경우 Unity Exception이 남</para>
+        /// </summary>
+        public static BuildConfig CreateConfig()
+        {
+            BuildConfig pConfig = ScriptableObject.CreateInstance<BuildConfig>();
+
+            pConfig.strProductName = PlayerSettings.productName;
+            pConfig.arrBuildSceneNames = Builder.GetEnabled_EditorScenes();
+
+            pConfig.strAbsolute_BuildOutputFolderPath = Application.dataPath.Replace("/Assets", "") + "/Build";
+            pConfig.bUse_DateTime_Suffix = true;
+
+            pConfig.pAndroidSetting = AndroidSetting.CreateSetting();
+            pConfig.pIOSSetting = IOSSetting.CreateSetting();
+
+            return pConfig;
+        }
 	}
 }

@@ -55,6 +55,7 @@ namespace Jenkins
     /// </summary>
     public partial class Builder
     {
+        public const string const_strPrefix_EditorContextMenu = "Tools/Strix/Jenkins Build/";
         const string const_strPrefix_ForDebugLog = "!@#$";
 
         public enum ECommandLineList
@@ -111,15 +112,36 @@ namespace Jenkins
 
         private static BuildConfig g_pLastConfig;
         
-        #region public
         
-        [MenuItem("Tools/Build/Create BuildConfig Example File")]
-        public static void Create_BuildConfig_Dummy()
+        [MenuItem(const_strPrefix_EditorContextMenu + "Create BuildConfig Example Json File")]
+        public static void Create_BuildConfig_Dummy_Json()
         {
-            string strContent = JsonUtility.ToJson(new BuildConfig(), true);
-            File.WriteAllText(Application.dataPath + "/" + nameof(BuildConfig) + "_Example.json", strContent);
+            string strContent = JsonUtility.ToJson(BuildConfig.CreateConfig(), true);
+            string strFilePath = nameof(BuildConfig) + "_Example.json";
+            File.WriteAllText(Application.dataPath + "/" + strFilePath, strContent);
+
             AssetDatabase.Refresh();
+
+            UnityEngine.Object pJsonFile = AssetDatabase.LoadMainAssetAtPath($"Assets/{strFilePath}");
+
+            Selection.activeObject = pJsonFile;
+            Debug.Log("Create BuildConfig Done", pJsonFile);
         }
+
+        // SO는 아직 고려중
+        //[MenuItem(const_strPrefix_EditorContextMenu + "Create BuildConfig Example SO File")]
+        //public static void Create_BuildConfig_Dummy_SO()
+        //{
+        //    BuildConfig pConfig = BuildConfig.CreateConfig();
+        //    AssetDatabase.CreateAsset(pConfig, $"Assets/{nameof(BuildConfig)} _Example.asset");
+        //    AssetDatabase.SaveAssets();
+        //    AssetDatabase.Refresh();
+
+        //    Selection.activeObject = pConfig;
+        //    Debug.Log("Create BuildConfig Done", pConfig);
+        //}
+
+        #region public
 
         public static string GetCommandLineArg(string strName)
         {
@@ -217,6 +239,7 @@ namespace Jenkins
             }
             catch (Exception pException)
             {
+                pOutFile = null;
                 return pException;
             }
 
@@ -265,7 +288,7 @@ namespace Jenkins
             }
 
             pEditorSetting_Backup.Back_To_Origin();
-            Process_PostBuild(pBuildConfig, eBuildTarget, strAbsolute_BuildOutputFolderPath);
+            Process_PostBuild(eBuildTarget, strAbsolute_BuildOutputFolderPath);
 
             Debug.LogFormat(const_strPrefix_ForDebugLog + " After Build DefineSymbol Current {0}",
                 PlayerSettings.GetScriptingDefineSymbolsForGroup(eBuildTargetGroup));
@@ -276,9 +299,10 @@ namespace Jenkins
             AssetDatabase.Refresh();
 #endif
         }
-        
+
         /// <summary>
-        /// Command Line으로 실행할 때 partial class file에 있으면 못찾음..
+        /// Android를 빌드합니다. CommandLine - ConfigPath 필요
+        /// <para>Command Line으로 실행할 때 partial class file에 있으면 못찾음..</para>
         /// </summary>
         public static void Build_Android()
         {
@@ -290,7 +314,8 @@ namespace Jenkins
         }
 
         /// <summary>
-        /// Command Line으로 실행할 때 partial class file에 있으면 못찾음..
+        /// IOS를 빌드합니다. CommandLine - ConfigPath 필요
+        /// <para>Command Line으로 실행할 때 partial class file에 있으면 못찾음..</para>
         /// </summary>
         public static void Build_IOS()
         {
@@ -381,7 +406,7 @@ namespace Jenkins
         }
 
 
-        private static void Process_PostBuild(BuildConfig pBuildConfig, BuildTarget eBuildTarget,
+        private static void Process_PostBuild(BuildTarget eBuildTarget,
             string strAbsolute_BuildOutputFolderPath)
         {
             switch (eBuildTarget)
