@@ -12,7 +12,7 @@
 이 세팅 파일을 Config파일 하나에 담은 후 Config 경로만 넘겨주는 식으로 빌드하기 위해서 만들었습니다.
 
 + 커맨드라인 뿐만아니라 UnityEditor에서 상단 탭에 `Tools/Strix/Jenkins Build/Show Builder Window` 를 통해 Config파일로 빌드를 할 수 있습니다.
-Config 파일 [링크](https://github.com/KorStrix/Unity_JenkinsBuilder/blob/master/Editor/BuildConfig.cs)
+(Config 파일 [링크](https://github.com/KorStrix/Unity_JenkinsBuilder/blob/master/Editor/BuildConfig.cs))
 
 
 # 3. 어떻게 설치하나요?
