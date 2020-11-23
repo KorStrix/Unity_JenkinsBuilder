@@ -11,6 +11,7 @@
 
 이 세팅 파일을 Config파일 하나에 담은 후 Config 경로만 넘겨주는 식으로 빌드하기 위해서 만들었습니다.
 
+![](https://github.com/KorStrix/Unity_JenkinsBuilder/blob/master/GithubImage/Jenkins_BuildConfig.png)
 (Config 파일 [링크](https://github.com/KorStrix/Unity_JenkinsBuilder/blob/master/Editor/BuildConfig.cs))
 
 
@@ -24,7 +25,6 @@
 
 ## 4-1. Build Config 생성 및 Editor에서 바로 빌드 테스트
 1. 유니티 에디터의 상단 탭 - Tools/Strix/Jenkins Build/Create Build Config Exmaple File을 생성합니다.
-![](https://github.com/KorStrix/Unity_JenkinsBuilder/blob/master/GithubImage/Jenkins_BuildConfig.png)
 2. Build Config는 Json 형식으로 이루어져 있으며, 각 항목당 설명은 스크립트에 주석[(링크)](https://github.com/KorStrix/Unity_JenkinsBuilder/blob/master/Editor/BuildConfig.cs)으로 달았습니다.
 이를 참고하며 Build Config 파일을 프로젝트에 맞게 수정합니다.
 3. 수정 완료 후 Tools/Build/Show Jenkins Builder Window를 통해 윈도우를 엽니다.
@@ -39,7 +39,7 @@
 ## 4-2. 젠킨스 - 안드로이드 빌드 테스트
 
 ![](https://github.com/KorStrix/Unity_JenkinsBuilder/blob/master/GithubImage/Jenkins_BuildConfig_Android.png)
-빌드하기 전 `BuildConfig/AndroidSetting`을 세팅하세요
+빌드하기 전 `BuildConfig/AndroidSetting`을 세팅하세요.
 
 안드로이드는 크게 어렵지 않기 때문에 자세한 설명을 생략합니다.
 
@@ -66,6 +66,9 @@
 
 ---
 ## 4-3. 젠킨스 - IOS 빌드 테스트
+
+![](https://github.com/KorStrix/Unity_JenkinsBuilder/blob/master/GithubImage/Jenkins_BuildConfig_iOS.png)
+빌드하기 전 `BuildConfig/iOSSetting`을 세팅하세요.
 
 ### 주의사항
 **IOS 빌드를 위해선 MAC OS의 PC와 Apple 개발자 계정이 필요합니다.**
