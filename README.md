@@ -1,3 +1,6 @@
+# 이 저장소는 관리되지 않습니다.
+https://github.com/unity-korea-community/unity-builder
+
 # 1. 젠킨스 빌더 프로젝트입니다.
 ![](https://github.com/KorStrix/Unity_JenkinsBuilder/blob/master/GithubImage/Jenkins_EditorWindow.png)
 
